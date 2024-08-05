@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_locales/flutter_locales.dart';
-import '../views/register_view.dart';
-import '../views/passcode_view.dart';
+import 'package:starman/views/register_view.dart';
+import 'package:starman/views/passcode_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
