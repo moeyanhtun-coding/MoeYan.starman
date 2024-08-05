@@ -1,22 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_locales/flutter_locales.dart';
+import '../views/register_view.dart';
+import '../views/passcode_view.dart';
 
-void main() {
-  runApp(const HelloWorldApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Locales.init(['en', 'mm']);
+  runApp(const MyApp());
 }
 
-class HelloWorldApp extends StatelessWidget {
-  const HelloWorldApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Scaffold(
-      appBar: AppBar(
-        title: const Text('Hello World App'),
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive, overlays: []);
+
+    return LocaleBuilder(
+      builder: (locale) => MaterialApp(
+        locale: locale,
+        localizationsDelegates: Locales.delegates,
+        supportedLocales: Locales.supportedLocales,
+
+        debugShowCheckedModeBanner: false,
+        //home: PasscodeView(),
+        home: RegisterView(),
       ),
-      body: const Center(
-        child: Text('Hello, World!!!'),
-      ),
-    ));
+    );
   }
 }
