@@ -38,7 +38,7 @@ Future<http.Response> _makePostRequest({
 
 class FusionApi {
   //* SatrGroupAPI *//
-  Future<StarGroupModel> getStarGroup(
+  Future<String> getStarGroup(
     String username,
     String password,
     String endpoint,
@@ -51,7 +51,7 @@ class FusionApi {
         username: username, // Replace with your actual username
         password: password, // Replace with your actual password
       );
-      return StarGroupModel.fromJson(json.decode(response.body));
+      return response.body;
     } catch (e) {
       throw Exception("Error getting star group: ${e.toString()}");
     }
