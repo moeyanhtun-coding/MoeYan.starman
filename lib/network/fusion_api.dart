@@ -1,6 +1,35 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'dart:developer' as dev;
+import '../models/star_group_model/star_group_model.dart';
+
+class FusionApi {
+  String username = 'fusion_dev';
+  String password = 'fusion_dev';
+  Future<StarGroupModel> getStarGroup() async {
+    try {
+      String basicAuth =
+          'Basic ${base64.encode(utf8.encode('$username:$password'))}';
+      dev.log(basicAuth);
+      var queryParameters = {'starId': '957a-562D'};
+      var url = Uri.https('api.fusionmyanmar.com', '/rest/starman/getStarGroup',
+          queryParameters);
+      final response = await http.post(url, headers: <String, String>{
+        'Authorization': basicAuth,
+        'SECRET_ACCESS_TOKEN':
+            "\$2a\$10\$wl2BjK4NHQwB6npW2xOWCOyFN/x3s92TKnLdSDFSVnTCuxIDg8mVG"
+      });
+
+      if (response.statusCode == 200) {
+        return StarGroupModel.fromJson(json.decode(response.body));
+      } else {
+        throw Exception("Result Fail");
+      }
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+}
 
 /*
 
@@ -30,8 +59,8 @@ class APIDemo {
     dev.log(basicAuth);
 
     var queryParameters = {'starId': '957a-562D'};
-    var url = Uri.https('api.fusionmyanmar.com',
-        '/rest/starman/getStarGroup', queryParameters);
+    var url = Uri.https(
+        'api.fusionmyanmar.com', '/rest/starman/getStarGroup', queryParameters);
 
     var response = await http.post(url, headers: <String, String>{
       'Authorization': basicAuth,
@@ -42,8 +71,8 @@ class APIDemo {
   }
 }
 
-  // For FusionAPI Testing with POSTMAN
-  /*
+// For FusionAPI Testing with POSTMAN
+/*
 
 SECRET_ACCESS_TOKEN
 $2a$10$wl2BjK4NHQwB6npW2xOWCOyFN/x3s92TKnLdSDFSVnTCuxIDg8mVG
