@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:js_interop';
 import 'package:http/http.dart' as http;
 import 'dart:developer' as dev;
 import '../models/last_subscription_model/last_subscription_model.dart';
@@ -77,26 +78,26 @@ class FusionApi {
     }
   }
 
-  //* StarLinksAPI *//
-  Future<List<StarLinksModel>> getStarLinks(
-    String username,
-    String password,
-    String endpoint,
-    Map<String, String> queryParams,
-  ) async {
-    try {
-      final response = await _makePostRequest(
-        endpoint: endpoint,
-        queryParams: queryParams,
-        username: username, // Replace with your actual username
-        password: password, // Replace with your actual password
-      );
-      List<dynamic> body = json.decode(response.body);
-      return body.map((dynamic item) => StarLinksModel.fromJson(item)).toList();
-    } catch (e) {
-      throw Exception("Error getting star group: ${e.toString()}");
-    }
-  }
+  // //* StarLinksAPI *//
+  // Future<String> getStarLinks(
+  //   String username,
+  //   String password,
+  //   String endpoint,
+  //   Map<String, String> queryParams,
+  // ) async {
+  //   try {
+  //     final response = await _makePostRequest(
+  //       endpoint: endpoint,
+  //       queryParams: queryParams,
+  //       username: username, // Replace with your actual username
+  //       password: password, // Replace with your actual password
+  //     );
+  //     List<dynamic> body = json.decode(response.body);
+  //     return body.toString();
+  //   } catch (e) {
+  //     throw Exception("Error getting star group: ${e.toString()}");
+  //   }
+  // }
 
   //* StarSubscriptionsAPI *//
   Future<List<StarSubscriptionsModel>> getStarSubscriptions(

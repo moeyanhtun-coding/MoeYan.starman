@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:starman/models/star_links_model/star_links_model.dart';
 import 'package:starman/widgets/navbar_widget.dart';
 import '../controllers/fusion_controller.dart';
 import '../models/star_group_model/star_group_model.dart';
@@ -18,11 +19,14 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   final FusionController fusionController = FusionController();
   StarGroupModel? _starGroupModel;
+  List<StarLinksModel>? _starLinksModel;
+  String starLinks = '';
 
   @override
   void initState() {
     super.initState();
     fusionController.starGroup();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _remainingBox();
       _showData();
@@ -40,6 +44,19 @@ class _HomeViewState extends State<HomeView> {
       });
     }
   }
+
+  // Future<void> _getStarLinks() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   String? starLinksJson = prefs.getString('_starLinks');
+  //   if (starLinksJson != null) {
+  //     List<dynamic> starLinksList = jsonDecode(starLinksJson.toString());
+  //     List<StarLinksModel> starLinksModelList =
+  //         StarLinksModel.fromJsonList(starLinksList);
+  //     setState(() {
+  //       _starLinksModel = starLinksModelList;
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -61,9 +78,21 @@ class _HomeViewState extends State<HomeView> {
           ? const Center(
               child: CircularProgressIndicator()) // Show a loading indicator
           : Center(
-              child: Text(
-                'Home Page',
-                style: TextStyle(fontSize: 30.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Home Page',
+                    style: TextStyle(fontSize: 30.0),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      // _getStarLinks();
+                      print(_starLinksModel.toString());
+                    },
+                    child: Text("Call Data"),
+                  )
+                ],
               ),
             ),
     );

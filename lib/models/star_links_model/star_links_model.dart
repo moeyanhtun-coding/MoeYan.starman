@@ -42,6 +42,10 @@ class StarLinksModel {
     );
   }
 
+  static List<StarLinksModel> fromJsonList(List<dynamic> jsonList) {
+    return jsonList.map((json) => StarLinksModel.fromJson(json)).toList();
+  }
+
   Map<String, dynamic> toJson() => {
         'id': id,
         'warehouseName': warehouseName,
