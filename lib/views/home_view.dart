@@ -1,5 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:starman/widgets/navbar_widget.dart';
+import '../controllers/fusion_controller.dart';
+import '../models/star_group_model/star_group_model.dart';
+
+late SharedPreferences prefs;
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -9,19 +16,40 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  final FusionController fusionController = FusionController();
+  StarGroupModel? _starGroupModel;
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    fusionController.starGroup();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _remainingBox();
+      _showData();
     });
+  }
+
+  Future<void> _showData() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? starGroupJson = prefs.getString('_starGroup');
+    if (starGroupJson != null) {
+      Map<String, dynamic> starGroupMap = jsonDecode(starGroupJson);
+      StarGroupModel starGroupModel = StarGroupModel.fromJson(starGroupMap);
+      setState(() {
+        _starGroupModel = starGroupModel;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: NavBar(),
+      drawer: _starGroupModel == null
+          ? null
+          : NavBar(
+              starId: _starGroupModel!.starId.toString(),
+              reaminingDate: "10",
+            ),
       appBar: AppBar(
         centerTitle: true,
         title: Text('Home Page'),
@@ -29,12 +57,15 @@ class _HomeViewState extends State<HomeView> {
       ),
 
       //body
-      body: const Center(
-        child: Text(
-          'Home Page',
-          style: TextStyle(fontSize: 30.0),
-        ),
-      ),
+      body: _starGroupModel == null
+          ? const Center(
+              child: CircularProgressIndicator()) // Show a loading indicator
+          : Center(
+              child: Text(
+                'Home Page',
+                style: TextStyle(fontSize: 30.0),
+              ),
+            ),
     );
   }
 
