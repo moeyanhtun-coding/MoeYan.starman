@@ -49,7 +49,6 @@ class _HomeViewState extends State<HomeView> {
         _starGroupModel = starGroup;
       });
     } else {
-      // Handle the case where the string is not available
       print('No star group found in preferences');
     }
   }

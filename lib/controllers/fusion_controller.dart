@@ -15,10 +15,11 @@ class FusionController {
     try {
       var queryParameters = {'starId': starId};
       var starGroup = await FusionApi().getStarGroup(
-          'fusion_dev',
-          'fusion_dev',
-          '/rest/starman/getStarGroup',
-          queryParameters); // Assuming getStarGroup() is async
+        'fusion_dev',
+        'fusion_dev',
+        '/rest/starman/getStarGroup',
+        queryParameters,
+      ); // Assuming getStarGroup() is async
       await prefs.setString("_starGroup", starGroup);
     } catch (e) {
       throw Exception(e.toString());
