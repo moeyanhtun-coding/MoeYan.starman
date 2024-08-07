@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:starman/models/star_links_model/star_links_model.dart';
+import 'package:starman/models/star_subscriptions_model/star_subscriptions_model.dart';
 import 'package:starman/widgets/navbar_widget.dart';
 import '../controllers/fusion_controller.dart';
 import '../models/last_subscription_model/last_subscription_model.dart';
@@ -22,6 +23,7 @@ class _HomeViewState extends State<HomeView> {
   StarGroupModel? _starGroupModel;
   List<StarLinksModel>? _starLinksModel;
   LastSubscriptionModel? _lastSubscriptionModel;
+  List<StarSubscriptionsModel>? _starSubscriptonsModel;
 
   @override
   void initState() {
@@ -39,6 +41,7 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
+  //* StarGroup *//
   Future<void> _getStarGroup() async {
     final prefs = await SharedPreferences.getInstance();
     String? starGroupJson = prefs.getString('_starGroup');
@@ -53,6 +56,7 @@ class _HomeViewState extends State<HomeView> {
     }
   }
 
+  //* LastSubscription *//
   Future<void> _getLastSubscription() async {
     final prefs = await SharedPreferences.getInstance();
     String? lastSubscriptionJson = prefs.getString('_lastSubscription');
@@ -71,6 +75,7 @@ class _HomeViewState extends State<HomeView> {
     }
   }
 
+  //* StarLinks *//
   Future<void> _getStarLinks() async {
     final prefs = await SharedPreferences.getInstance();
     String? starLinksJson = prefs.getString('_starLinks');
@@ -86,10 +91,23 @@ class _HomeViewState extends State<HomeView> {
     }
   }
 
+  //* StarSubscriptions *//
   Future<void> _getStarSubscriptions() async {
     final prefs = await SharedPreferences.getInstance();
     String? starSubscriptionsJson = prefs.getString("_starSubscriptions");
-    print(starSubscriptionsJson);
+    var decodedJson = jsonDecode(starSubscriptionsJson!);
+    if (starSubscriptionsJson != null) {
+      List<Map<String, dynamic>> starSubscriptionsMap =
+          List<Map<String, dynamic>>.from(decodedJson);
+      List<StarSubscriptionsModel> starSubscriptions =
+          StarSubscriptionsModel.fromJsonList(starSubscriptionsMap);
+      setState(() {
+        _starSubscriptonsModel = starSubscriptions;
+      });
+    } else {
+      // Handle the case where the string is not available
+      print('No star group found in preferences');
+    }
   }
 
   @override
@@ -111,7 +129,7 @@ class _HomeViewState extends State<HomeView> {
       body: _starGroupModel == null
           ? const Center(
               child: CircularProgressIndicator()) // Show a loading indicator
-          : Center(
+          : const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -119,13 +137,6 @@ class _HomeViewState extends State<HomeView> {
                     'Home Page',
                     style: TextStyle(fontSize: 30.0),
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      // _getStarLinks();
-                      print(_starLinksModel.toString());
-                    },
-                    child: Text("Call Data"),
-                  )
                 ],
               ),
             ),
@@ -137,8 +148,8 @@ class _HomeViewState extends State<HomeView> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            backgroundColor: Color.fromARGB(255, 255, 243, 243),
-            title: Row(
+            backgroundColor: const Color.fromARGB(255, 255, 243, 243),
+            title: const Row(
               children: [
                 Icon(
                   Icons.circle_notifications,
@@ -151,10 +162,10 @@ class _HomeViewState extends State<HomeView> {
                 Text('Day Remaining'),
               ],
             ),
-            content: Text('This is a dialog box.'),
+            content: const Text('This is a dialog box.'),
             actions: <Widget>[
               TextButton(
-                child: Text('Close'),
+                child: const Text('Close'),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },

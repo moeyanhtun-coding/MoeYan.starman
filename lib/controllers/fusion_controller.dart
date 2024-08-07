@@ -65,7 +65,7 @@ class FusionController {
       var starSubscriptions = await FusionApi().getStarSubscriptions(
         'fusion_dev',
         'fusion_dev',
-        '/rest/starman/getStarLinks',
+        '/rest/starman/getStarSubscriptions',
         queryParameters,
       );
       await prefs.setString('_starSubscriptions', starSubscriptions);

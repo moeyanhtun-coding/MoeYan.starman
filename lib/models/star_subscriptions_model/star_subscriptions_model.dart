@@ -30,6 +30,11 @@ class StarSubscriptionsModel {
       deleted: json['deleted'] as bool?,
     );
   }
+  static List<StarSubscriptionsModel> fromJsonList(List<dynamic> jsonList) {
+    return jsonList
+        .map((json) => StarSubscriptionsModel.fromJson(json))
+        .toList();
+  }
 
   Map<String, dynamic> toJson() => {
         'id': id,
