@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:starman/models/star_links_model/star_links_model.dart';
 import 'package:starman/widgets/navbar_widget.dart';
 import '../controllers/fusion_controller.dart';
+import '../models/last_subscription_model/last_subscription_model.dart';
 import '../models/star_group_model/star_group_model.dart';
 
 late SharedPreferences prefs;
@@ -20,43 +21,77 @@ class _HomeViewState extends State<HomeView> {
   final FusionController fusionController = FusionController();
   StarGroupModel? _starGroupModel;
   List<StarLinksModel>? _starLinksModel;
-  String starLinks = '';
+  LastSubscriptionModel? _lastSubscriptionModel;
 
   @override
   void initState() {
     super.initState();
-    fusionController.starGroup();
-
+    fusionController.starGroup('957a-562D');
+    fusionController.lastSubscription('957a-562D');
+    fusionController.starLinks('957a-562D');
+    fusionController.starSubscriptions('957a-562D');
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _remainingBox();
-      _showData();
+      _getStarGroup();
+      _getLastSubscription();
+      _getStarLinks();
+      _getStarSubscriptions();
     });
   }
 
-  Future<void> _showData() async {
+  Future<void> _getStarGroup() async {
     final prefs = await SharedPreferences.getInstance();
     String? starGroupJson = prefs.getString('_starGroup');
     if (starGroupJson != null) {
       Map<String, dynamic> starGroupMap = jsonDecode(starGroupJson);
-      StarGroupModel starGroupModel = StarGroupModel.fromJson(starGroupMap);
+      StarGroupModel starGroup = StarGroupModel.fromJson(starGroupMap);
       setState(() {
-        _starGroupModel = starGroupModel;
+        _starGroupModel = starGroup;
+      });
+    } else {
+      // Handle the case where the string is not available
+      print('No star group found in preferences');
+    }
+  }
+
+  Future<void> _getLastSubscription() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? lastSubscriptionJson = prefs.getString('_lastSubscription');
+
+    if (lastSubscriptionJson != null) {
+      Map<String, dynamic> lastSubscriptionMap =
+          jsonDecode(lastSubscriptionJson);
+      LastSubscriptionModel lastSubscription =
+          LastSubscriptionModel.fromJson(lastSubscriptionMap);
+      setState(() {
+        _lastSubscriptionModel = lastSubscription;
+      });
+    } else {
+      // Handle the case where the string is not available
+      print('No star group found in preferences');
+    }
+  }
+
+  Future<void> _getStarLinks() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? starLinksJson = prefs.getString('_starLinks');
+    var decodedJson = jsonDecode(starLinksJson!);
+    if (starLinksJson != null) {
+      List<Map<String, dynamic>> starLinksMap =
+          List<Map<String, dynamic>>.from(decodedJson);
+      List<StarLinksModel> starLinks =
+          StarLinksModel.fromJsonList(starLinksMap);
+      setState(() {
+        _starLinksModel = starLinks;
       });
     }
   }
 
-  // Future<void> _getStarLinks() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   String? starLinksJson = prefs.getString('_starLinks');
-  //   if (starLinksJson != null) {
-  //     List<dynamic> starLinksList = jsonDecode(starLinksJson.toString());
-  //     List<StarLinksModel> starLinksModelList =
-  //         StarLinksModel.fromJsonList(starLinksList);
-  //     setState(() {
-  //       _starLinksModel = starLinksModelList;
-  //     });
-  //   }
-  // }
+  Future<void> _getStarSubscriptions() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? starSubscriptionsJson = prefs.getString("_starSubscriptions");
+    print(starSubscriptionsJson);
+  }
 
   @override
   Widget build(BuildContext context) {
