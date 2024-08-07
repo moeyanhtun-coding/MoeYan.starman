@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:starman/state_management/starid_controller.dart';
 import 'package:starman/widgets/custom_textformfield_widget.dart';
 
-class RegisterView extends StatelessWidget {
+class StaridView extends StatelessWidget {
   final RegisterController _controller = RegisterController();
 
   @override
