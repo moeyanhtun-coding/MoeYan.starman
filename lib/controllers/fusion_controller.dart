@@ -10,48 +10,66 @@ class FusionController {
     prefs = await SharedPreferences.getInstance();
   }
 
-  Future<void> starGroup() async {
+  Future<void> starGroup(String starId) async {
     await _initialize();
     try {
-      var queryParameters = {'starId': '957a-562D'};
+      var queryParameters = {'starId': starId};
       var starGroup = await FusionApi().getStarGroup(
           'fusion_dev',
           'fusion_dev',
           '/rest/starman/getStarGroup',
           queryParameters); // Assuming getStarGroup() is async
-      await prefs.setString("_starGroup", starGroup.toString());
+      await prefs.setString("_starGroup", starGroup);
     } catch (e) {
       throw Exception(e.toString());
     }
   }
 
-  Future<void> lastSubscription() async {
+  Future<void> lastSubscription(String starId) async {
+    await _initialize();
     try {
-      var queryParameters = {'starId': '957a-562D'};
+      var queryParameters = {'starId': starId};
       var lastSubscription = await FusionApi().getLastSubscription(
         'fusion_dev',
         'fusion_dev',
         '/rest/starman/getLastSubscription',
         queryParameters,
       );
-      await prefs.setString('_lastSubscription', lastSubscription.toString());
+      await prefs.setString('_lastSubscription', lastSubscription);
     } catch (e) {
       throw Exception(e.toString());
     }
   }
 
-  // Future<void> starLinks() async {
-  //   try {
-  //     var queryParameters = {'starId': '957a-562D'};
-  //     var starLinks = await FusionApi().getStarLinks(
-  //       'fusion_dev',
-  //       'fusion_dev',
-  //       '/rest/starman/getStarLinks',
-  //       queryParameters,
-  //     );
-  //     await prefs.setString('_starLinks', starLinks.toString());
-  //   } catch (e) {
-  //     throw Exception(e.toString());
-  //   }
-  // }
+  Future<void> starLinks(String starId) async {
+    await _initialize();
+    try {
+      var queryParameters = {'starId': starId};
+      var starLinks = await FusionApi().getStarLinks(
+        'fusion_dev',
+        'fusion_dev',
+        '/rest/starman/getStarLinks',
+        queryParameters,
+      );
+      await prefs.setString('_starLinks', starLinks);
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  Future<void> starSubscriptions(String starId) async {
+    await _initialize();
+    try {
+      var queryParameters = {'starId': starId};
+      var starSubscriptions = await FusionApi().getStarSubscriptions(
+        'fusion_dev',
+        'fusion_dev',
+        '/rest/starman/getStarLinks',
+        queryParameters,
+      );
+      await prefs.setString('_starSubscriptions', starSubscriptions);
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
 }
