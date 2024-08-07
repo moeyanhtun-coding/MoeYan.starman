@@ -13,14 +13,14 @@ class RegisterView extends StatelessWidget {
           Expanded(
             child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(40, 10, 40, 0),
+                padding: const EdgeInsets.fromLTRB(40, 40, 40, 0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Center(
                       child: Image.asset(
                         'assets/logo.png',
-                        height: 80,
+                        height: 100,
                       ),
                     ),
                     SizedBox(height: 10),
@@ -34,7 +34,7 @@ class RegisterView extends StatelessWidget {
                     SizedBox(height: 23),
                     SizedBox(height: 12),
                     CustomTextFieldWidget(
-                      label: 'star_id',
+                      label: 'Star ID',
                       icon: Icons.star,
                       onChanged: _controller.updateStarID,
                     ),

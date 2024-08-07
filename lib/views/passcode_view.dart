@@ -30,14 +30,14 @@ class _PasscodeViewState extends State<PasscodeView> {
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+          padding: const EdgeInsets.fromLTRB(0, 40, 0, 0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Center(
                 child: Image.asset(
                   'assets/logo.png',
-                  height: 80,
+                  height: 100,
                 ),
               ),
               SizedBox(height: 10),

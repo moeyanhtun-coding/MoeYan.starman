@@ -17,8 +17,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
 
         debugShowCheckedModeBanner: false,
-        //home: PasscodeView(),
-        home: RegisterView(),
+        home: PasscodeView(),
+        //home: RegisterView(),
 
     );
   }
