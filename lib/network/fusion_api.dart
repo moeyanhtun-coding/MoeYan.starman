@@ -1,14 +1,8 @@
 import 'dart:convert';
-import 'dart:js_interop';
 import 'package:http/http.dart' as http;
-import 'dart:developer' as dev;
-import '../models/last_subscription_model/last_subscription_model.dart';
-import '../models/star_group_model/star_group_model.dart';
-import '../models/star_links_model/star_links_model.dart';
-import '../models/star_subscriptions_model/star_subscriptions_model.dart';
 
 //* Common PostRequestAPI *//
-Future<http.Response> _makePostRequest({
+Future<http.Response> _rootPostRequest({
   required String endpoint,
   required Map<String, String> queryParams,
   required String username,
@@ -46,7 +40,7 @@ class FusionApi {
     Map<String, String> queryParams,
   ) async {
     try {
-      final response = await _makePostRequest(
+      final response = await _rootPostRequest(
         endpoint: endpoint,
         queryParams: queryParams,
         username: username, // Replace with your actual username
@@ -59,69 +53,62 @@ class FusionApi {
   }
 
 //* LastSubscriptionAPI *//
-  Future<LastSubscriptionModel> getLastSubscription(
+  Future<String> getLastSubscription(
     String username,
     String password,
     String endpoint,
     Map<String, String> queryParams,
   ) async {
     try {
-      final response = await _makePostRequest(
+      final response = await _rootPostRequest(
         endpoint: endpoint,
         queryParams: queryParams,
         username: username,
         password: password,
       );
-      return LastSubscriptionModel.fromJson(json.decode(response.body));
+      return response.body;
     } catch (e) {
       throw Exception("Error getting star group: ${e.toString()}");
     }
   }
 
-  // //* StarLinksAPI *//
-  // Future<String> getStarLinks(
-  //   String username,
-  //   String password,
-  //   String endpoint,
-  //   Map<String, String> queryParams,
-  // ) async {
-  //   try {
-  //     final response = await _makePostRequest(
-  //       endpoint: endpoint,
-  //       queryParams: queryParams,
-  //       username: username, // Replace with your actual username
-  //       password: password, // Replace with your actual password
-  //     );
-  //     List<dynamic> body = json.decode(response.body);
-  //     return body.toString();
-  //   } catch (e) {
-  //     throw Exception("Error getting star group: ${e.toString()}");
-  //   }
-  // }
-
-  //* StarSubscriptionsAPI *//
-  Future<List<StarSubscriptionsModel>> getStarSubscriptions(
+  Future<String> getStarLinks(
     String username,
     String password,
     String endpoint,
     Map<String, String> queryParams,
   ) async {
     try {
-      final response = await _makePostRequest(
+      final response = await _rootPostRequest(
         endpoint: endpoint,
         queryParams: queryParams,
-        username: username, // Replace with your actual username
-        password: password, // Replace with your actual password
+        username: username,
+        password: password,
       );
-      List<dynamic> body = json.decode(response.body);
-      return body
-          .map((dynamic item) => StarSubscriptionsModel.fromJson(item))
-          .toList();
+      return response.body;
     } catch (e) {
-      throw Exception("Error getting star group: ${e.toString()}");
+      throw Exception("Error getting star link: ${e.toString()}");
     }
   }
-}
+
+//* StarSubscriptionsAPI *//
+  Future<String> getStarSubscriptions(
+    String username,
+    String password,
+    String endpoint,
+    Map<String, String> queryParams,
+  ) async {
+    try {
+      final response = await _rootPostRequest(
+          endpoint: endpoint,
+          queryParams: queryParams,
+          username: username,
+          password: password);
+      return response.body;
+    } catch (e) {
+      throw Exception("Error getting star subscriptions: ${e.toString()}");
+    }
+  }
 
 /*
 
@@ -142,26 +129,26 @@ https://api.fusionmyanmar.com/rest/starman/getStarSubscriptions
 Method = POST ,Param {starId}
 
 */
-class APIDemo {
-  void httpGet() async {
-    String username = 'fusion_dev';
-    String password = 'fusion_dev';
-    String basicAuth =
-        'Basic ${base64.encode(utf8.encode('$username:$password'))}';
-    dev.log(basicAuth);
+// class APIDemo {
+//   void httpGet() async {
+//     String username = 'fusion_dev';
+//     String password = 'fusion_dev';
+//     String basicAuth =
+//         'Basic ${base64.encode(utf8.encode('$username:$password'))}';
+//     dev.log(basicAuth);
 
-    var queryParameters = {'starId': '957a-562D'};
-    var url = Uri.https(
-        'api.fusionmyanmar.com', '/rest/starman/getStarGroup', queryParameters);
+//     var queryParameters = {'starId': '957a-562D'};
+//     var url = Uri.https(
+//         'api.fusionmyanmar.com', '/rest/starman/getStarGroup', queryParameters);
 
-    var response = await http.post(url, headers: <String, String>{
-      'Authorization': basicAuth,
-      'SECRET_ACCESS_TOKEN':
-          "\$2a\$10\$wl2BjK4NHQwB6npW2xOWCOyFN/x3s92TKnLdSDFSVnTCuxIDg8mVG"
-    });
-    dev.log(response.body);
-  }
-}
+//     var response = await http.post(url, headers: <String, String>{
+//       'Authorization': basicAuth,
+//       'SECRET_ACCESS_TOKEN':
+//           "\$2a\$10\$wl2BjK4NHQwB6npW2xOWCOyFN/x3s92TKnLdSDFSVnTCuxIDg8mVG"
+//     });
+//     dev.log(response.body);
+//   }
+// }
 
 // For FusionAPI Testing with POSTMAN
 /*
@@ -183,3 +170,4 @@ https://api.fusionmyanmar.com/rest/starman/getStarSubscriptions?starId=957a-562D
 
 
 */
+}
