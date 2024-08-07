@@ -69,7 +69,10 @@ class _PasscodePadWidgetState extends State<PasscodePadWidget> {
 
   Widget _buildNumpad() {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 55, vertical: 20),
+      margin: EdgeInsets.symmetric(
+          horizontal: 55,
+          vertical: 0
+      ),
       child: GridView.builder(
         shrinkWrap: true,
         itemCount: 12,

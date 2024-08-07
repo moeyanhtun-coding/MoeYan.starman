@@ -1,4 +1,4 @@
-import 'package:starman/models/register_model.dart';
+import 'package:starman/models/starid_model.dart';
 
 class RegisterController {
   final RegisterModel _model = RegisterModel();

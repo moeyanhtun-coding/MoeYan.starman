@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_locales/flutter_locales.dart';
-import 'package:starman/views/register_view.dart';
+import 'package:starman/views/starid_view.dart';
 import 'package:starman/views/passcode_view.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Locales.init(['en', 'mm']);
   runApp(const MyApp());
 }
 
@@ -17,16 +14,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive, overlays: []);
 
-    return LocaleBuilder(
-      builder: (locale) => MaterialApp(
-        locale: locale,
-        localizationsDelegates: Locales.delegates,
-        supportedLocales: Locales.supportedLocales,
+    return MaterialApp(
 
         debugShowCheckedModeBanner: false,
         //home: PasscodeView(),
         home: RegisterView(),
-      ),
+
     );
   }
 }
