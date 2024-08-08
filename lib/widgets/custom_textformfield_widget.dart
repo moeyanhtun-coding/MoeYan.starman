@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 class CustomTextFieldWidget extends StatelessWidget {
   final String label;
   final IconData icon;
-  final Function(String) onChanged;
   final bool isAddressField;
+  final TextEditingController controller;
 
   CustomTextFieldWidget({
     required this.label,
     required this.icon,
-    required this.onChanged,
     this.isAddressField = false,
+    required this.controller,
   });
 
   @override
@@ -38,7 +38,7 @@ class CustomTextFieldWidget extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
           ),
           child: TextFormField(
-            onChanged: onChanged,
+            controller: controller,
             maxLines: isAddressField ? 3 : 1,
             decoration: InputDecoration(
               border: InputBorder.none,
