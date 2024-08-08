@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:starman/views/error_view.dart';
+import 'package:starman/views/existing_passcode_view.dart';
 import 'package:starman/views/home_view.dart';
+import 'package:starman/views/new_error_view.dart';
 import 'package:starman/views/starid_view.dart';
 import 'package:starman/views/passcode_view.dart';
 import 'package:starman/views/splashscreen.dart';
@@ -19,8 +22,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       //home: SplashScreen(),
-      home: HomeView(),
-      //home: PasscodeView(),
+      home: PasscodeView(),
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:starman/state_management/passcode_controller.dart';
+import 'package:starman/views/confirm_passcode_view.dart';
 import 'package:starman/widgets/passcode_pad_widget.dart';
-
 
 class PasscodeView extends StatefulWidget {
   @override
@@ -10,9 +10,9 @@ class PasscodeView extends StatefulWidget {
 
 class _PasscodeViewState extends State<PasscodeView> {
   final PasscodeController _controller = PasscodeController();
-
   final List<FocusNode> _focusNodes = List.generate(4, (_) => FocusNode());
-  final List<TextEditingController> _textControllers = List.generate(4, (_) => TextEditingController());
+  final List<TextEditingController> _textControllers =
+  List.generate(4, (_) => TextEditingController());
 
   @override
   void dispose() {
@@ -23,6 +23,37 @@ class _PasscodeViewState extends State<PasscodeView> {
       textController.dispose();
     }
     super.dispose();
+  }
+
+  void _navigateToConfirmPasscode() {
+    Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) =>
+            ConfirmPasscodeScreen(tempPasscode: _controller.getPasscode())));
+  }
+
+  void _showError(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Error'),
+        content: Text(message),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _onPasscodeComplete() async {
+    if (_controller.isPasscodeComplete()) {
+      await _controller.savePasscode();
+      _navigateToConfirmPasscode();
+    } else {
+      _showError('Please enter a 4-digit passcode');
+    }
   }
 
   @override
@@ -41,36 +72,27 @@ class _PasscodeViewState extends State<PasscodeView> {
                 ),
               ),
               SizedBox(height: 10),
-        
-              ///DYNAMIC TEXT OUTPUT//
               Text(
-                'Welcome Back',
+                'Set Your Passcode',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-        
               SizedBox(height: 80),
-        
-        
               SizedBox(height: 10),
-        
-              ///DYNAMIC TEXT OUTPUT//
               Text(
-                'Enter Passcode to Continue ',
+                'Please enter a 4-digit passcode',
                 style: TextStyle(
                   fontSize: 13,
                 ),
               ),
-        
               SizedBox(height: 20),
-        
-        
               PasscodePadWidget(
                 controller: _controller,
                 focusNodes: _focusNodes,
                 textControllers: _textControllers,
+                onCompleted: _onPasscodeComplete,
               ),
             ],
           ),
