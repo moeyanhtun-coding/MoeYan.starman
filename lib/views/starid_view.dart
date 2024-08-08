@@ -8,6 +8,7 @@ import 'package:starman/models/star_group_model/star_group_model.dart';
 import 'package:starman/models/star_links_model/star_links_model.dart';
 import 'package:starman/models/star_subscriptions_model/star_subscriptions_model.dart';
 import 'package:starman/widgets/custom_textformfield_widget.dart';
+import '../models/starid_model.dart';
 
 late SharedPreferences prefs;
 
@@ -23,6 +24,12 @@ class _StaridViewState extends State<StaridView> {
   final FusionController fusionController = FusionController();
   StarGroupModel? _starGroupModel;
   String? starId = '';
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,7 +62,9 @@ class _StaridViewState extends State<StaridView> {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 40, vertical: 20),
+                      horizontal: 40,
+                      vertical: 20,
+                    ),
                     child: ElevatedButton(
                       onPressed: () async {
                         setState(() {
@@ -66,7 +75,6 @@ class _StaridViewState extends State<StaridView> {
                         isGetData
                             ? await _getData()
                             : throw Exception("StarId Not Found");
-                        log(_starGroupModel.toString());
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.teal,
@@ -96,12 +104,13 @@ class _StaridViewState extends State<StaridView> {
   }
 
   _getData() async {
+    prefs = await SharedPreferences.getInstance();
     await _getStarGroup();
     if (_starGroupModel != null) {
       fusionController.lastSubscription(starId!);
       fusionController.starLinks(starId!);
       fusionController.starSubscriptions(starId!);
-      await _getStarLinks();
+      await prefs.setString("_starId", starId!);
     } else {
       log("not found");
     }
