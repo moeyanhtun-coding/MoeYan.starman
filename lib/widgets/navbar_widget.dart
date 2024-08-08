@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 
 class NavBar extends StatelessWidget {
-  const NavBar({super.key});
+  String starId;
+  String reaminingDate;
+  NavBar({
+    super.key,
+    required this.starId,
+    required this.reaminingDate,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -40,14 +46,14 @@ class NavBar extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'S-2342',
+                starId,
                 style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.width * 0.08,
+                  fontSize: MediaQuery.of(context).size.width * 0.06,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Text(
-                'Expired in 10 days',
+                'Expired in $reaminingDate days',
                 style: TextStyle(
                     color: Colors.indigo,
                     fontSize: 15,

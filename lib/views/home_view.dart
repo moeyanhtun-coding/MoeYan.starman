@@ -1,5 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:starman/models/star_links_model/star_links_model.dart';
+import 'package:starman/models/star_subscriptions_model/star_subscriptions_model.dart';
 import 'package:starman/widgets/navbar_widget.dart';
+import '../controllers/fusion_controller.dart';
+import '../models/last_subscription_model/last_subscription_model.dart';
+import '../models/star_group_model/star_group_model.dart';
+
+late SharedPreferences prefs;
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -9,19 +19,106 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  final FusionController fusionController = FusionController();
+  StarGroupModel? _starGroupModel;
+  List<StarLinksModel>? _starLinksModel;
+  LastSubscriptionModel? _lastSubscriptionModel;
+  List<StarSubscriptionsModel>? _starSubscriptonsModel;
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    fusionController.starGroup('957a-562D');
+    fusionController.lastSubscription('957a-562D');
+    fusionController.starLinks('957a-562D');
+    fusionController.starSubscriptions('957a-562D');
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _remainingBox();
+      _getStarGroup();
+      _getLastSubscription();
+      _getStarLinks();
+      _getStarSubscriptions();
     });
+  }
+
+  //* StarGroup *//
+  Future<void> _getStarGroup() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? starGroupJson = prefs.getString('_starGroup');
+    if (starGroupJson != null) {
+      Map<String, dynamic> starGroupMap = jsonDecode(starGroupJson);
+      StarGroupModel starGroup = StarGroupModel.fromJson(starGroupMap);
+      setState(() {
+        _starGroupModel = starGroup;
+      });
+    } else {
+      print('No star group found in preferences');
+    }
+  }
+
+  //* LastSubscription *//
+  Future<void> _getLastSubscription() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? lastSubscriptionJson = prefs.getString('_lastSubscription');
+
+    if (lastSubscriptionJson != null) {
+      Map<String, dynamic> lastSubscriptionMap =
+          jsonDecode(lastSubscriptionJson);
+      LastSubscriptionModel lastSubscription =
+          LastSubscriptionModel.fromJson(lastSubscriptionMap);
+      setState(() {
+        _lastSubscriptionModel = lastSubscription;
+      });
+    } else {
+      // Handle the case where the string is not available
+      print('No star group found in preferences');
+    }
+  }
+
+  //* StarLinks *//
+  Future<void> _getStarLinks() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? starLinksJson = prefs.getString('_starLinks');
+    var decodedJson = jsonDecode(starLinksJson!);
+    if (starLinksJson != null) {
+      List<Map<String, dynamic>> starLinksMap =
+          List<Map<String, dynamic>>.from(decodedJson);
+      List<StarLinksModel> starLinks =
+          StarLinksModel.fromJsonList(starLinksMap);
+      setState(() {
+        _starLinksModel = starLinks;
+      });
+    }
+  }
+
+  //* StarSubscriptions *//
+  Future<void> _getStarSubscriptions() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? starSubscriptionsJson = prefs.getString("_starSubscriptions");
+    var decodedJson = jsonDecode(starSubscriptionsJson!);
+    if (starSubscriptionsJson != null) {
+      List<Map<String, dynamic>> starSubscriptionsMap =
+          List<Map<String, dynamic>>.from(decodedJson);
+      List<StarSubscriptionsModel> starSubscriptions =
+          StarSubscriptionsModel.fromJsonList(starSubscriptionsMap);
+      setState(() {
+        _starSubscriptonsModel = starSubscriptions;
+      });
+    } else {
+      // Handle the case where the string is not available
+      print('No star group found in preferences');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: NavBar(),
+      drawer: _starGroupModel == null
+          ? null
+          : NavBar(
+              starId: _starGroupModel!.starId.toString(),
+              reaminingDate: "10",
+            ),
       appBar: AppBar(
         centerTitle: true,
         title: Text('Home Page'),
@@ -29,12 +126,20 @@ class _HomeViewState extends State<HomeView> {
       ),
 
       //body
-      body: const Center(
-        child: Text(
-          'Home Page',
-          style: TextStyle(fontSize: 30.0),
-        ),
-      ),
+      body: _starGroupModel == null
+          ? const Center(
+              child: CircularProgressIndicator()) // Show a loading indicator
+          : const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Home Page',
+                    style: TextStyle(fontSize: 30.0),
+                  ),
+                ],
+              ),
+            ),
     );
   }
 
@@ -43,8 +148,8 @@ class _HomeViewState extends State<HomeView> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            backgroundColor: Color.fromARGB(255, 255, 243, 243),
-            title: Row(
+            backgroundColor: const Color.fromARGB(255, 255, 243, 243),
+            title: const Row(
               children: [
                 Icon(
                   Icons.circle_notifications,
@@ -57,10 +162,10 @@ class _HomeViewState extends State<HomeView> {
                 Text('Day Remaining'),
               ],
             ),
-            content: Text('This is a dialog box.'),
+            content: const Text('This is a dialog box.'),
             actions: <Widget>[
               TextButton(
-                child: Text('Close'),
+                child: const Text('Close'),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
