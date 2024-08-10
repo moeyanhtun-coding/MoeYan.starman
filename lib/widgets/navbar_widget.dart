@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-
+import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+late SharedPreferences prefs;
 class NavBar extends StatelessWidget {
   String starId;
   String reaminingDate;
@@ -84,7 +86,11 @@ class NavBar extends StatelessWidget {
   Widget _drawerBottom() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
-      child: _listTile("LogOut", Icons.logout, () {}), //TODO: Write Logout Process
+      child: _listTile("LogOut", Icons.logout, () async {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.clear();
+        Get.offAllNamed('/starId');
+      }), //TODO: Write Logout Process
     );
   }
 

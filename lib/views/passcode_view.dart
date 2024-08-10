@@ -71,7 +71,7 @@ class _PasscodeViewState extends State<PasscodeView> {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(0, 40, 0, 0),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   Center(
                     child: Image.asset(

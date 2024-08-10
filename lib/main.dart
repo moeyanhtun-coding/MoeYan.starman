@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       getPages: routes,
       debugShowCheckedModeBanner: false,
-      home:PasscodeView(),
+      home:SplashScreen(),
     );
   }
 }
