@@ -8,26 +8,22 @@ Future<http.Response> _rootPostRequest({
   required String username,
   required String password,
 }) async {
-  try {
-    String basicAuth =
-        'Basic ${base64.encode(utf8.encode('$username:$password'))}';
-    var url = Uri.https('api.fusionmyanmar.com', endpoint, queryParams);
-    final response = await http.post(
-      url,
-      headers: {
-        'Authorization': basicAuth,
-        'SECRET_ACCESS_TOKEN':
-            "\$2a\$10\$wl2BjK4NHQwB6npW2xOWCOyFN/x3s92TKnLdSDFSVnTCuxIDg8mVG",
-      },
-    );
+  String basicAuth =
+      'Basic ${base64.encode(utf8.encode('$username:$password'))}';
+  var url = Uri.https('api.fusionmyanmar.com', endpoint, queryParams);
+  final response = await http.post(
+    url,
+    headers: {
+      'Authorization': basicAuth,
+      'SECRET_ACCESS_TOKEN':
+          "\$2a\$10\$wl2BjK4NHQwB6npW2xOWCOyFN/x3s92TKnLdSDFSVnTCuxIDg8mVG",
+    },
+  );
 
-    if (response.statusCode == 200) {
-      return response;
-    } else {
-      throw Exception("Request failed with status: ${response.statusCode}");
-    }
-  } catch (e) {
-    throw Exception("Request error: ${e.toString()}");
+  if (response.statusCode == 200) {
+    return response;
+  } else {
+    return response;
   }
 }
 
@@ -39,17 +35,13 @@ class FusionApi {
     String endpoint,
     Map<String, String> queryParams,
   ) async {
-    try {
-      final response = await _rootPostRequest(
-        endpoint: endpoint,
-        queryParams: queryParams,
-        username: username, // Replace with your actual username
-        password: password, // Replace with your actual password
-      );
-      return response.body;
-    } catch (e) {
-      throw Exception("Error getting star group: ${e.toString()}");
-    }
+    final response = await _rootPostRequest(
+      endpoint: endpoint,
+      queryParams: queryParams,
+      username: username, // Replace with your actual username
+      password: password, // Replace with your actual password
+    );
+    return response.body;
   }
 
 //* LastSubscriptionAPI *//
@@ -59,17 +51,13 @@ class FusionApi {
     String endpoint,
     Map<String, String> queryParams,
   ) async {
-    try {
-      final response = await _rootPostRequest(
-        endpoint: endpoint,
-        queryParams: queryParams,
-        username: username,
-        password: password,
-      );
-      return response.body;
-    } catch (e) {
-      throw Exception("Error getting star group: ${e.toString()}");
-    }
+    final response = await _rootPostRequest(
+      endpoint: endpoint,
+      queryParams: queryParams,
+      username: username,
+      password: password,
+    );
+    return response.body;
   }
 
   Future<String> getStarLinks(
@@ -78,17 +66,13 @@ class FusionApi {
     String endpoint,
     Map<String, String> queryParams,
   ) async {
-    try {
-      final response = await _rootPostRequest(
-        endpoint: endpoint,
-        queryParams: queryParams,
-        username: username,
-        password: password,
-      );
-      return response.body;
-    } catch (e) {
-      throw Exception("Error getting star link: ${e.toString()}");
-    }
+    final response = await _rootPostRequest(
+      endpoint: endpoint,
+      queryParams: queryParams,
+      username: username,
+      password: password,
+    );
+    return response.body;
   }
 
 //* StarSubscriptionsAPI *//
@@ -98,16 +82,12 @@ class FusionApi {
     String endpoint,
     Map<String, String> queryParams,
   ) async {
-    try {
-      final response = await _rootPostRequest(
-          endpoint: endpoint,
-          queryParams: queryParams,
-          username: username,
-          password: password);
-      return response.body;
-    } catch (e) {
-      throw Exception("Error getting star subscriptions: ${e.toString()}");
-    }
+    final response = await _rootPostRequest(
+        endpoint: endpoint,
+        queryParams: queryParams,
+        username: username,
+        password: password);
+    return response.body;
   }
 
 /*

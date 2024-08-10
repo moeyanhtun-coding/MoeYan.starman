@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:starman/views/passcode_view.dart';
 import 'dart:async';
 import '../views/starid_view.dart';
+
+late SharedPreferences prefs;
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -11,14 +17,27 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(Duration(seconds: 3), () {
-      Navigator.of(context).pushReplacement(
-          //TODO:Existing user state check in share preferences
-          //TODO:
+    _navigateToNextScreen();
+  }
 
-          //New User state
-          MaterialPageRoute(builder: (context) => StaridView()));
-    });
+  Future<void> _navigateToNextScreen() async {
+    bool isExistStarId = await _validationStarId();
+    Timer(
+      Duration(seconds: 3),
+      () {
+        if (isExistStarId) {
+          Get.offAllNamed('/passcode');
+        } else {
+          Get.offAllNamed('/starId');
+        }
+      },
+    );
+  }
+
+  Future<bool> _validationStarId() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? checkStarId = prefs.getString("_starId");
+    return checkStarId != null ? true : false;
   }
 
   @override

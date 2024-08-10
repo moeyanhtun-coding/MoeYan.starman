@@ -10,19 +10,21 @@ class FusionController {
     prefs = await SharedPreferences.getInstance();
   }
 
-  Future<void> starGroup(String starId) async {
+  Future<bool> starGroup(String starId) async {
     await _initialize();
-    try {
-      var queryParameters = {'starId': starId};
-      var starGroup = await FusionApi().getStarGroup(
-        'fusion_dev',
-        'fusion_dev',
-        '/rest/starman/getStarGroup',
-        queryParameters,
-      ); // Assuming getStarGroup() is async
+
+    var queryParameters = {'starId': starId};
+    var starGroup = await FusionApi().getStarGroup(
+      'fusion_dev',
+      'fusion_dev',
+      '/rest/starman/getStarGroup',
+      queryParameters,
+    );
+    if (starGroup.isNotEmpty) {
       await prefs.setString("_starGroup", starGroup);
-    } catch (e) {
-      throw Exception(e.toString());
+      return true;
+    } else {
+      return false;
     }
   }
 
