@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:starman/views/passcode_view.dart';
 import 'dart:async';
@@ -24,17 +26,9 @@ class _SplashScreenState extends State<SplashScreen> {
       Duration(seconds: 3),
       () {
         if (isExistStarId) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => PasscodeView(),
-            ),
-          );
+          Get.offAllNamed('/passcode');
         } else {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => StaridView(),
-            ),
-          );
+          Get.offAllNamed('/starId');
         }
       },
     );

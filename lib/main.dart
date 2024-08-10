@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       getPages: routes,
       debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
+      home: HomeView(),
       //home: HomeView(),
       //home: PasscodeView(),
     );

@@ -21,9 +21,8 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
-
+    _getStarGroup();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _getStarGroup();
       _remainingBox();
     });
   }

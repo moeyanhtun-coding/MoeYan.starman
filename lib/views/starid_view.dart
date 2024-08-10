@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:starman/controllers/fusion_controller.dart';
@@ -68,10 +69,10 @@ class _StaridViewState extends State<StaridView> {
                     ),
                     child: ElevatedButton(
                       onPressed: _isButtonDisabled
-                          ? null // Disable the button if _isButtonDisabled is true
+                          ? null
                           : () async {
                               setState(() {
-                                _isButtonDisabled = true; // Disable the button
+                                _isButtonDisabled = true;
                                 starId = _controller.text;
                               });
 
@@ -84,10 +85,12 @@ class _StaridViewState extends State<StaridView> {
                                 _showAlertDialog(context);
                               }
 
-                              setState(() {
-                                _isButtonDisabled =
-                                    false; // Re-enable the button
-                              });
+                              setState(
+                                () {
+                                  _isButtonDisabled =
+                                      false; // Re-enable the button
+                                },
+                              );
                             },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.teal,
