@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:starman/widgets/navbar_widget.dart';
@@ -5,6 +8,7 @@ import '../controllers/fusion_controller.dart';
 import '../models/star_group_model/star_group_model.dart';
 
 late SharedPreferences prefs;
+StarGroupModel? _starGroupModel;
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -14,13 +18,12 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  final FusionController fusionController = FusionController();
-  StarGroupModel? _starGroupModel;
-
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      _getStarGroup();
       _remainingBox();
     });
   }
@@ -56,6 +59,21 @@ class _HomeViewState extends State<HomeView> {
               ),
             ),
     );
+  }
+
+  //* StarGroup *//
+  Future<void> _getStarGroup() async {
+    prefs = await SharedPreferences.getInstance(); // Use the global `prefs`
+    String? starGroupJson = prefs.getString('_starGroup');
+    if (starGroupJson != null) {
+      Map<String, dynamic> starGroupMap = jsonDecode(starGroupJson);
+      StarGroupModel starGroup = StarGroupModel.fromJson(starGroupMap);
+      setState(() {
+        _starGroupModel = starGroup;
+      });
+    } else {
+      log('No star group found in preferences');
+    }
   }
 
   Future _remainingBox() {

@@ -8,7 +8,6 @@ import 'package:starman/models/star_group_model/star_group_model.dart';
 import 'package:starman/models/star_links_model/star_links_model.dart';
 import 'package:starman/models/star_subscriptions_model/star_subscriptions_model.dart';
 import 'package:starman/widgets/custom_textformfield_widget.dart';
-import '../models/starid_model.dart';
 
 late SharedPreferences prefs;
 
@@ -70,11 +69,14 @@ class _StaridViewState extends State<StaridView> {
                         setState(() {
                           starId = _controller.text;
                         });
+
                         bool isGetData =
                             await fusionController.starGroup(starId!);
-                        isGetData
-                            ? await _getData()
-                            : throw Exception("StarId Not Found");
+                        if (isGetData) {
+                          await _getData();
+                        } else {
+                          _alertDialog();
+                        }
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.teal,
@@ -114,6 +116,29 @@ class _StaridViewState extends State<StaridView> {
     } else {
       log("not found");
     }
+  }
+
+  Widget _alertDialog() {
+    return AlertDialog(
+      icon: Icon(Icons.star),
+      title: Text("StarId Not Found"),
+      content: const SingleChildScrollView(
+        child: ListBody(
+          children: <Widget>[
+            Text('Your StarId is not found!.'),
+            Text('Please contact 09890630456'),
+          ],
+        ),
+      ),
+      actions: <Widget>[
+        TextButton(
+          child: const Text('Try Again'),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    );
   }
 
   Widget _logo() {

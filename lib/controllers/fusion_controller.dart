@@ -12,22 +12,19 @@ class FusionController {
 
   Future<bool> starGroup(String starId) async {
     await _initialize();
-    try {
-      var queryParameters = {'starId': starId};
-      var starGroup = await FusionApi().getStarGroup(
-        'fusion_dev',
-        'fusion_dev',
-        '/rest/starman/getStarGroup',
-        queryParameters,
-      );
-      if (starGroup != null) {
-        await prefs.setString("_starGroup", starGroup);
-        return true;
-      } else {
-        return false;
-      }
-    } catch (e) {
-      throw Exception(e.toString());
+
+    var queryParameters = {'starId': starId};
+    var starGroup = await FusionApi().getStarGroup(
+      'fusion_dev',
+      'fusion_dev',
+      '/rest/starman/getStarGroup',
+      queryParameters,
+    );
+    if (starGroup != '') {
+      await prefs.setString("_starGroup", starGroup);
+      return true;
+    } else {
+      return false;
     }
   }
 
