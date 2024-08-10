@@ -5,11 +5,13 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:starman/controllers/fusion_controller.dart';
+import 'package:starman/main.dart';
 import 'package:starman/models/last_subscription_model/last_subscription_model.dart';
 import 'package:starman/models/star_group_model/star_group_model.dart';
 import 'package:starman/models/star_links_model/star_links_model.dart';
 import 'package:starman/models/star_subscriptions_model/star_subscriptions_model.dart';
 import 'package:starman/widgets/custom_textformfield_widget.dart';
+import 'package:starman/widgets/language_switch_widget.dart';
 
 late SharedPreferences prefs;
 
@@ -49,72 +51,78 @@ class _StaridViewState extends State<StaridView> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
+                  SizedBox(height: 50),
                   _logo(),
+                  SizedBox(height: 50),
                   const Text(
-                    'registration',
+                    'Welcome to StarMan',
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: 30,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                  SizedBox(height: 50),
+
+                  LanguageButtonWidget(),
+                  SizedBox(height: 30),
+
+                  const Text(
+                    'Please Enter Registered StarID',
+                    style: TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                  SizedBox(height: 30),
                   CustomTextFieldWidget(
                     label: 'Star Id',
                     icon: Icons.star,
                     controller: _controller,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 40,
-                      vertical: 20,
-                    ),
-                    child: ElevatedButton(
-                      onPressed: _isButtonDisabled
-                          ? null
-                          : () async {
-                              setState(() {
-                                _isButtonDisabled = true;
-                                starId = _controller.text;
-                              });
-
-                              bool isGetData =
-                                  await fusionController.starGroup(starId!);
-                              if (isGetData) {
-                                await _getData();
-                              } else {
-                                // ignore: use_build_context_synchronously
-                                _showAlertDialog(context);
-                              }
-
-                              setState(
-                                () {
-                                  _isButtonDisabled =
-                                      false; // Re-enable the button
-                                },
-                              );
-                            },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.teal,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(7),
-                        ),
-                        elevation: 1,
-                        minimumSize: const Size(double.infinity, 40),
-                      ),
-                      child: const Text(
-                        'register',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
-                        ),
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ),
           ),
-        )
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 70),
+          child: ElevatedButton(
+            onPressed: _isButtonDisabled
+                ? null
+                : () async {
+              setState(() {
+                _isButtonDisabled = true;
+                starId = _controller.text;
+              });
+
+              bool isGetData = await fusionController.starGroup(starId!);
+              if (isGetData) {
+                await _getData();
+              } else {
+                _showAlertDialog(context);
+              }
+
+              setState(() {
+                _isButtonDisabled = false; // Re-enable the button
+              });
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primaryColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(7),
+              ),
+              elevation: 1,
+              minimumSize: const Size(double.infinity, 40),
+            ),
+            child: const Text(
+              'Enter',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 15,
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -180,7 +188,7 @@ class _StaridViewState extends State<StaridView> {
     return Center(
       child: Image.asset(
         'assets/logo.png',
-        height: 100,
+        height: 120,
       ),
     );
   }
