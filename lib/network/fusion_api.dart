@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:http/http.dart' as http;
 
 //* Common PostRequestAPI *//
@@ -52,17 +51,13 @@ class FusionApi {
     String endpoint,
     Map<String, String> queryParams,
   ) async {
-    try {
-      final response = await _rootPostRequest(
-        endpoint: endpoint,
-        queryParams: queryParams,
-        username: username,
-        password: password,
-      );
-      return response.body;
-    } catch (e) {
-      throw Exception("Error getting star group: ${e.toString()}");
-    }
+    final response = await _rootPostRequest(
+      endpoint: endpoint,
+      queryParams: queryParams,
+      username: username,
+      password: password,
+    );
+    return response.body;
   }
 
   Future<String> getStarLinks(
@@ -71,17 +66,13 @@ class FusionApi {
     String endpoint,
     Map<String, String> queryParams,
   ) async {
-    try {
-      final response = await _rootPostRequest(
-        endpoint: endpoint,
-        queryParams: queryParams,
-        username: username,
-        password: password,
-      );
-      return response.body;
-    } catch (e) {
-      throw Exception("Error getting star link: ${e.toString()}");
-    }
+    final response = await _rootPostRequest(
+      endpoint: endpoint,
+      queryParams: queryParams,
+      username: username,
+      password: password,
+    );
+    return response.body;
   }
 
 //* StarSubscriptionsAPI *//
@@ -91,16 +82,12 @@ class FusionApi {
     String endpoint,
     Map<String, String> queryParams,
   ) async {
-    try {
-      final response = await _rootPostRequest(
-          endpoint: endpoint,
-          queryParams: queryParams,
-          username: username,
-          password: password);
-      return response.body;
-    } catch (e) {
-      throw Exception("Error getting star subscriptions: ${e.toString()}");
-    }
+    final response = await _rootPostRequest(
+        endpoint: endpoint,
+        queryParams: queryParams,
+        username: username,
+        password: password);
+    return response.body;
   }
 
 /*
