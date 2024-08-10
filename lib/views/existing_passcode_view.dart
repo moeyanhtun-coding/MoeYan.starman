@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:starman/state_management/passcode_controller.dart';
-import 'package:starman/views/confirm_passcode_view.dart';
+import 'package:starman/views/home_view.dart';
+import 'package:starman/widgets/loading_widget.dart';
 import 'package:starman/widgets/passcode_pad_widget.dart';
 
-class PasscodeView extends StatefulWidget {
+class ExistingPasscodeView extends StatefulWidget {
   @override
-  _PasscodeViewState createState() => _PasscodeViewState();
+  _ExistingPasscodeViewState createState() => _ExistingPasscodeViewState();
 }
 
-class _PasscodeViewState extends State<PasscodeView> {
+class _ExistingPasscodeViewState extends State<ExistingPasscodeView> {
   final PasscodeController _controller = PasscodeController();
   final List<FocusNode> _focusNodes = List.generate(4, (_) => FocusNode());
   final List<TextEditingController> _textControllers =
   List.generate(4, (_) => TextEditingController());
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -25,17 +28,46 @@ class _PasscodeViewState extends State<PasscodeView> {
     super.dispose();
   }
 
-  void _navigateToConfirmPasscode() {
-    Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) =>
-            ConfirmPasscodeScreen(tempPasscode: _controller.getPasscode())));
+  Future<bool> _isPasscodeCorrect() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? storedPasscode = prefs.getString('passcode');
+    return _controller.getPasscode() == storedPasscode;
+  }
+
+  void _navigateToHome() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    await Future.delayed(Duration(seconds: 2)); // Show loading for 2 seconds
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => HomeView()));
+  }
+
+  void _validatePasscode() async {
+    if (_controller.isPasscodeComplete()) {
+      bool isCorrect = await _isPasscodeCorrect();
+      if (isCorrect) {
+        _navigateToHome();
+      } else {
+        _showError('Incorrect passcode. Please try again.');
+        _clearPasscodeFields();
+      }
+    } else {
+      _showError('Please enter a 4-digit passcode');
+    }
   }
 
   void _showError(String message) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Error'),
+        title: Text('Wrong Passcode'),
         content: Text(message),
         actions: <Widget>[
           TextButton(
@@ -47,26 +79,21 @@ class _PasscodeViewState extends State<PasscodeView> {
     );
   }
 
-  void _onPasscodeComplete() async {
-    if (_controller.isPasscodeComplete()) {
-      await _controller.savePasscode();
-      _navigateToConfirmPasscode();
-    } else {
-      _showError('Please enter a 4-digit passcode');
-    }
+  void _clearPasscodeFields() {
+    setState(() {
+      _controller.clearPasscode();
+      for (var i = 0; i < _textControllers.length; i++) {
+        _textControllers[i].clear();
+      }
+      FocusScope.of(context).requestFocus(_focusNodes[0]);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
-        fit: StackFit.expand,
-        children: <Widget>[
-          // Image.asset(
-          //   'assets/starman_bg.png',
-          //   fit: BoxFit.cover,
-          // ),
-
+        children: [
           SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(0, 40, 0, 0),
@@ -81,35 +108,38 @@ class _PasscodeViewState extends State<PasscodeView> {
                   ),
                   SizedBox(height: 10),
                   Text(
-                    'Set Your Passcode',
+                    'Enter Passcode To Login',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black,
                     ),
                   ),
                   SizedBox(height: 80),
+                  SizedBox(height: 10),
                   Text(
                     'Please enter a 4-digit passcode',
                     style: TextStyle(
                       fontSize: 13,
-                      color: Colors.black,
                     ),
                   ),
-                  SizedBox(height: 100),
+                  SizedBox(height: 20),
                   PasscodePadWidget(
                     controller: _controller,
                     focusNodes: _focusNodes,
                     textControllers: _textControllers,
-                    onCompleted: _onPasscodeComplete,
+                    onCompleted: _validatePasscode,
                   ),
                 ],
               ),
             ),
           ),
+          if (_isLoading)
+            Container(
+              color: Colors.black.withOpacity(0.5),
+              child: LoadingOverlay(message: 'Loading...'),
+            ),
         ],
       ),
     );
   }
-
 }

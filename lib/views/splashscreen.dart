@@ -43,9 +43,13 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFF9087F0),
       body: Center(
-        child: Text('Starman', style: TextStyle(fontSize: 24)),
-      ),
+          child: Image.asset(
+        'assets/sslogo.png',
+        width: 250,
+        height: 250,
+      )),
     );
   }
 }

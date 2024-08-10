@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:starman/main.dart';
 import 'package:starman/state_management/passcode_controller.dart';
 
 class PasscodePadWidget extends StatefulWidget {
   final PasscodeController controller;
   final List<FocusNode> focusNodes;
   final List<TextEditingController> textControllers;
+  final VoidCallback onCompleted;
 
   const PasscodePadWidget({
     Key? key,
     required this.controller,
     required this.focusNodes,
     required this.textControllers,
+    required this.onCompleted,
   }) : super(key: key);
 
   @override
@@ -51,10 +54,7 @@ class _PasscodePadWidgetState extends State<PasscodePadWidget> {
         focusNode: widget.focusNodes[index],
         readOnly: true,
         obscureText: true,
-        style: TextStyle(
-            fontSize: 16,
-            color: Colors.black
-        ),
+        style: TextStyle(fontSize: 16, color: Colors.black),
         textAlign: TextAlign.center,
         maxLength: 1,
         decoration: InputDecoration(
@@ -69,10 +69,7 @@ class _PasscodePadWidgetState extends State<PasscodePadWidget> {
 
   Widget _buildNumpad() {
     return Container(
-      margin: EdgeInsets.symmetric(
-          horizontal: 55,
-          vertical: 0
-      ),
+      margin: EdgeInsets.symmetric(horizontal: 55, vertical: 0),
       child: GridView.builder(
         shrinkWrap: true,
         itemCount: 12,
@@ -99,7 +96,7 @@ class _PasscodePadWidgetState extends State<PasscodePadWidget> {
     if (index == 9) {
       return ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.grey,
+          backgroundColor: Colors.grey[300],
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
@@ -116,7 +113,7 @@ class _PasscodePadWidgetState extends State<PasscodePadWidget> {
         child: Text(
           'C',
           style: TextStyle(
-            fontSize: 18,
+            fontSize: 30,
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
@@ -137,14 +134,14 @@ class _PasscodePadWidgetState extends State<PasscodePadWidget> {
               }
             });
           },
-          child: Icon(Icons.backspace, color: Colors.teal),
+          child: Icon(Icons.backspace, color: Colors.deepPurpleAccent),
         ),
       );
     } else {
       int number = index == 10 ? 0 : index + 1;
       return TextButton(
         style: TextButton.styleFrom(
-          backgroundColor: Colors.grey,
+          backgroundColor: AppColors.primaryColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
@@ -165,13 +162,11 @@ class _PasscodePadWidgetState extends State<PasscodePadWidget> {
                 widget.controller.updatePasscode('$number', i);
                 if (i < widget.textControllers.length - 1) {
                   FocusScope.of(context).requestFocus(widget.focusNodes[i + 1]);
+                } else if (widget.controller.isPasscodeComplete()) {
+                  widget.onCompleted();
                 }
                 break;
               }
-            }
-
-            if (widget.controller.isPasscodeComplete()) {
-              print('Passcode complete: ${widget.controller.getPasscode()}');
             }
           });
         },

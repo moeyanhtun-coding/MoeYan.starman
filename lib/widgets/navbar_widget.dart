@@ -84,7 +84,7 @@ class NavBar extends StatelessWidget {
   Widget _drawerBottom() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
-      child: _listTile("LogOut", Icons.logout, () {}),
+      child: _listTile("LogOut", Icons.logout, () {}), //TODO: Write Logout Process
     );
   }
 
