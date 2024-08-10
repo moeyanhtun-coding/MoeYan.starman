@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:starman/main.dart';
 import 'package:starman/state_management/passcode_controller.dart';
 
 class PasscodePadWidget extends StatefulWidget {
   final PasscodeController controller;
   final List<FocusNode> focusNodes;
   final List<TextEditingController> textControllers;
-  final VoidCallback onCompleted; // Add this callback to notify when the passcode is complete
+  final VoidCallback onCompleted;
 
   const PasscodePadWidget({
     Key? key,
     required this.controller,
     required this.focusNodes,
     required this.textControllers,
-    required this.onCompleted, // Initialize the callback in the constructor
+    required this.onCompleted,
   }) : super(key: key);
 
   @override
@@ -95,7 +96,7 @@ class _PasscodePadWidgetState extends State<PasscodePadWidget> {
     if (index == 9) {
       return ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.grey,
+          backgroundColor: Colors.grey[300],
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
@@ -112,7 +113,7 @@ class _PasscodePadWidgetState extends State<PasscodePadWidget> {
         child: Text(
           'C',
           style: TextStyle(
-            fontSize: 18,
+            fontSize: 30,
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
@@ -133,14 +134,14 @@ class _PasscodePadWidgetState extends State<PasscodePadWidget> {
               }
             });
           },
-          child: Icon(Icons.backspace, color: Colors.teal),
+          child: Icon(Icons.backspace, color: Colors.deepPurpleAccent),
         ),
       );
     } else {
       int number = index == 10 ? 0 : index + 1;
       return TextButton(
         style: TextButton.styleFrom(
-          backgroundColor: Colors.grey,
+          backgroundColor: AppColors.primaryColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
@@ -162,7 +163,7 @@ class _PasscodePadWidgetState extends State<PasscodePadWidget> {
                 if (i < widget.textControllers.length - 1) {
                   FocusScope.of(context).requestFocus(widget.focusNodes[i + 1]);
                 } else if (widget.controller.isPasscodeComplete()) {
-                  widget.onCompleted(); // Trigger the callback when passcode is complete
+                  widget.onCompleted();
                 }
                 break;
               }

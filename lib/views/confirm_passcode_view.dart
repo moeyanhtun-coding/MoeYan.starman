@@ -44,7 +44,7 @@ class _ConfirmPasscodeScreenState extends State<ConfirmPasscodeScreen> {
         _isLoading = true;
       });
 
-      await Future.delayed(Duration(seconds: 2)); // Show loading for 2 seconds
+      await Future.delayed(Duration(seconds: 2));
 
       await _savePasscode(_controller.getPasscode());
 
@@ -95,23 +95,11 @@ class _ConfirmPasscodeScreenState extends State<ConfirmPasscodeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _isLoading
-          ? null // Hide the app bar when loading
-          : AppBar(
-        backgroundColor: Colors.transparent,
-        leading: IconButton(
-          onPressed: _navigateBackToPasscodeView,
-          icon: Icon(
-            Icons.arrow_back_ios_new,
-            color: Colors.black,
-          ),
-        ),
-      ),
       body: Stack(
         children: [
           SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+              padding: const EdgeInsets.fromLTRB(0, 40, 0, 0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
@@ -137,7 +125,7 @@ class _ConfirmPasscodeScreenState extends State<ConfirmPasscodeScreen> {
                       fontSize: 13,
                     ),
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 100),
                   PasscodePadWidget(
                     controller: _controller,
                     focusNodes: _focusNodes,
@@ -148,11 +136,24 @@ class _ConfirmPasscodeScreenState extends State<ConfirmPasscodeScreen> {
               ),
             ),
           ),
+          // Loading overlay
           if (_isLoading)
             Container(
               color: Colors.black.withOpacity(0.5),
               child: LoadingOverlay(message: 'Loading...'),
             ),
+          // IconButton
+          Positioned(
+            top: 30, // Adjust as needed
+            left: 10, // Adjust as needed
+            child: IconButton(
+              onPressed: _navigateBackToPasscodeView,
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                color: Colors.black,
+              ),
+            ),
+          ),
         ],
       ),
     );
