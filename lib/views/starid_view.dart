@@ -51,9 +51,9 @@ class _StaridViewState extends State<StaridView> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  SizedBox(height: 50),
+                  SizedBox(height: 40),
                   _logo(),
-                  SizedBox(height: 50),
+                  SizedBox(height: 40),
                   const Text(
                     'Welcome to StarMan',
                     style: TextStyle(
@@ -63,7 +63,8 @@ class _StaridViewState extends State<StaridView> {
                   ),
                   SizedBox(height: 50),
 
-                  LanguageButtonWidget(),
+                  LanguageSwitcher(),
+
                   SizedBox(height: 30),
 
                   const Text(
