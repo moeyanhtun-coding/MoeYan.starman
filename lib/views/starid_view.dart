@@ -80,6 +80,7 @@ class _StaridViewState extends State<StaridView> {
                               if (isGetData) {
                                 await _getData();
                               } else {
+                                // ignore: use_build_context_synchronously
                                 _showAlertDialog(context);
                               }
 
@@ -147,7 +148,7 @@ class _StaridViewState extends State<StaridView> {
           ),
           actions: [
             TextButton(
-              child: Text("OK"),
+              child: const Text("OK"),
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
               },
@@ -207,8 +208,7 @@ class _StaridViewState extends State<StaridView> {
       LastSubscriptionModel lastSubscription =
           LastSubscriptionModel.fromJson(lastSubscriptionMap);
     } else {
-      // Handle the case where the string is not available
-      print('No star group found in preferences');
+      log('No star group found in preferences');
     }
   }
 
@@ -216,10 +216,15 @@ class _StaridViewState extends State<StaridView> {
   Future<void> _getStarLinks() async {
     final prefs = await SharedPreferences.getInstance();
     String? starLinksJson = prefs.getString('_starLinks');
-    var decodedJson = jsonDecode(starLinksJson!);
-    List<Map<String, dynamic>> starLinksMap =
-        List<Map<String, dynamic>>.from(decodedJson);
-    List<StarLinksModel> starLinks = StarLinksModel.fromJsonList(starLinksMap);
+    if (starLinksJson != null) {
+      var decodedJson = jsonDecode(starLinksJson);
+      List<Map<String, dynamic>> starLinksMap =
+          List<Map<String, dynamic>>.from(decodedJson);
+      List<StarLinksModel> starLinks =
+          StarLinksModel.fromJsonList(starLinksMap);
+    } else {
+      log("No star links found in preferences");
+    }
   }
 
   //* StarSubscriptions *//
@@ -234,7 +239,7 @@ class _StaridViewState extends State<StaridView> {
           StarSubscriptionsModel.fromJsonList(starSubscriptionsMap);
     } else {
       // Handle the case where the string is not available
-      print('No star group found in preferences');
+      log('No star group found in preferences');
     }
   }
 }
