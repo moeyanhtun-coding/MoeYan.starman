@@ -42,7 +42,6 @@ class FusionApi {
       username: username, // Replace with your actual username
       password: password, // Replace with your actual password
     );
-    log(response.body);
     return response.body;
   }
 

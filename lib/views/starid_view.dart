@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:starman/controllers/fusion_controller.dart';
 import 'package:starman/models/last_subscription_model/last_subscription_model.dart';
@@ -23,6 +24,7 @@ class _StaridViewState extends State<StaridView> {
   final FusionController fusionController = FusionController();
   StarGroupModel? _starGroupModel;
   String? starId = '';
+  bool _isButtonDisabled = false;
 
   @override
   void initState() {
@@ -65,19 +67,27 @@ class _StaridViewState extends State<StaridView> {
                       vertical: 20,
                     ),
                     child: ElevatedButton(
-                      onPressed: () async {
-                        setState(() {
-                          starId = _controller.text;
-                        });
+                      onPressed: _isButtonDisabled
+                          ? null // Disable the button if _isButtonDisabled is true
+                          : () async {
+                              setState(() {
+                                _isButtonDisabled = true; // Disable the button
+                                starId = _controller.text;
+                              });
 
-                        bool isGetData =
-                            await fusionController.starGroup(starId!);
-                        if (isGetData) {
-                          await _getData();
-                        } else {
-                          _alertDialog();
-                        }
-                      },
+                              bool isGetData =
+                                  await fusionController.starGroup(starId!);
+                              if (isGetData) {
+                                await _getData();
+                              } else {
+                                _showAlertDialog(context);
+                              }
+
+                              setState(() {
+                                _isButtonDisabled =
+                                    false; // Re-enable the button
+                              });
+                            },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.teal,
                         shape: RoundedRectangleBorder(
@@ -105,6 +115,49 @@ class _StaridViewState extends State<StaridView> {
     );
   }
 
+  void _showAlertDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Row(
+            children: [
+              const Icon(
+                Icons.notification_important_rounded,
+                color: Colors.redAccent,
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              Text(
+                "StarId Not Found!",
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: MediaQuery.sizeOf(context).width * 0.048),
+              ),
+            ],
+          ),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Please Call Service Center.'),
+                Text('Phone - 09890630456'),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   _getData() async {
     prefs = await SharedPreferences.getInstance();
     await _getStarGroup();
@@ -113,32 +166,10 @@ class _StaridViewState extends State<StaridView> {
       fusionController.starLinks(starId!);
       fusionController.starSubscriptions(starId!);
       await prefs.setString("_starId", starId!);
+      Get.offAllNamed('/passcode');
     } else {
       log("not found");
     }
-  }
-
-  Widget _alertDialog() {
-    return AlertDialog(
-      icon: Icon(Icons.star),
-      title: Text("StarId Not Found"),
-      content: const SingleChildScrollView(
-        child: ListBody(
-          children: <Widget>[
-            Text('Your StarId is not found!.'),
-            Text('Please contact 09890630456'),
-          ],
-        ),
-      ),
-      actions: <Widget>[
-        TextButton(
-          child: const Text('Try Again'),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ],
-    );
   }
 
   Widget _logo() {

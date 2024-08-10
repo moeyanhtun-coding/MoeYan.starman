@@ -20,7 +20,7 @@ class FusionController {
       '/rest/starman/getStarGroup',
       queryParameters,
     );
-    if (starGroup != '') {
+    if (starGroup.isNotEmpty) {
       await prefs.setString("_starGroup", starGroup);
       return true;
     } else {
