@@ -201,7 +201,7 @@ class _StaridViewState extends State<StaridView> {
       ]);
       await _getLastSubscription();
       String? passcode = prefs.getString('user_passcode');
-      if (passcode!.isNotEmpty) {
+      if (passcode != null) {
         Get.offNamed('/existingPasscode');
       } else {
         Get.offAllNamed('/passcode');
