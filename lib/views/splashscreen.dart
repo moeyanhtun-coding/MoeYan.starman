@@ -26,7 +26,7 @@ class _SplashScreenState extends State<SplashScreen> {
       Duration(seconds: 3),
       () {
         if (isExistStarId) {
-          Get.offAllNamed('/passcode');
+          Get.offAllNamed('/existingPasscode');
         } else {
           Get.offAllNamed('/starId');
         }

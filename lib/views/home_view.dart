@@ -2,9 +2,10 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:starman/models/last_subscription_model/last_subscription_model.dart';
 import 'package:starman/widgets/navbar_widget.dart';
-import '../controllers/fusion_controller.dart';
 import '../models/star_group_model/star_group_model.dart';
 
 late SharedPreferences prefs;
@@ -18,13 +19,27 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  int? _reamaingDay;
+  LastSubscriptionModel? _lastSubscriptionModel;
+
   @override
   void initState() {
     super.initState();
-    _getStarGroup();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _initializeData();
+  }
+
+  Future<void> _initializeData() async {
+    await _getStarGroup();
+    await _getLastSubscription();
+    _reamaingDay = await _remainingDate();
+    if (_reamaingDay! < 10) {
       _remainingBox();
-    });
+    }
   }
 
   @override
@@ -34,15 +49,13 @@ class _HomeViewState extends State<HomeView> {
           ? null
           : NavBar(
               starId: _starGroupModel!.starId.toString(),
-              reaminingDate: "10",
+              reaminingDate: _reamaingDay.toString(),
             ),
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Home Page'),
+        title: const Text('Home Page'),
         backgroundColor: Colors.grey[600],
       ),
-
-      //body
       body: _starGroupModel == null
           ? const Center(
               child: CircularProgressIndicator()) // Show a loading indicator
@@ -75,8 +88,35 @@ class _HomeViewState extends State<HomeView> {
     }
   }
 
-  Future _remainingBox() {
-    return showDialog(
+  //* LastSubscription *//
+  Future<void> _getLastSubscription() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? lastSubscriptionJson = prefs.getString('_lastSubscription');
+
+    if (lastSubscriptionJson != null) {
+      Map<String, dynamic> lastSubscriptionMap =
+          jsonDecode(lastSubscriptionJson);
+      LastSubscriptionModel lastSubscription =
+          LastSubscriptionModel.fromJson(lastSubscriptionMap);
+      setState(() {
+        _lastSubscriptionModel = lastSubscription;
+      });
+    } else {
+      log('No last subscription found in preferences');
+    }
+  }
+
+  Future<int> _remainingDate() async {
+    String endDateString =
+        (_lastSubscriptionModel?.licenseInfo?.endDate).toString();
+    DateTime endDate = DateFormat('dd/MM/yyyy').parse(endDateString);
+    DateTime currentDate = DateTime.now();
+    int remainingDays = endDate.difference(currentDate).inDays;
+    return remainingDays;
+  }
+
+  Future<void> _remainingBox() async {
+    await showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -94,7 +134,8 @@ class _HomeViewState extends State<HomeView> {
               Text('Day Remaining'),
             ],
           ),
-          content: const Text('This is a dialog box.'),
+          content:
+              Text('Your subscribtion is only ${_reamaingDay.toString()} left'),
           actions: <Widget>[
             TextButton(
               child: const Text('Close'),

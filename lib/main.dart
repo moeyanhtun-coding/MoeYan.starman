@@ -25,7 +25,8 @@ class MyApp extends StatelessWidget {
     GetPage(name: '/passcode', page: () => PasscodeView()),
     GetPage(name: '/home', page: () => HomeView()),
     GetPage(name: '/error', page: () => ErrorView()),
-    GetPage(name: '/existingPasscode', page: () => ExistingPasscodeView()), GetPage(name: '/existingPasscode', page: () => ExistingPasscodeView())
+    GetPage(name: '/existingPasscode', page: () => ExistingPasscodeView()),
+    GetPage(name: '/existingPasscode', page: () => ExistingPasscodeView())
   ];
 
   MyApp({super.key});

@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:starman/controllers/fusion_controller.dart';
 import 'package:starman/models/last_subscription_model/last_subscription_model.dart';
@@ -24,6 +25,7 @@ class _StaridViewState extends State<StaridView> {
   final TextEditingController _controller = TextEditingController();
   final FusionController fusionController = FusionController();
   StarGroupModel? _starGroupModel;
+  LastSubscriptionModel? _lastSubscriptionModel;
   String? starId = '';
   bool _isButtonDisabled = false;
 
@@ -47,8 +49,11 @@ class _StaridViewState extends State<StaridView> {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(40, 40, 40, 0),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  SizedBox(
+                    height: 80,
+                  ),
                   _logo(),
                   const Text(
                     'registration',
@@ -162,17 +167,47 @@ class _StaridViewState extends State<StaridView> {
     );
   }
 
-  _getData() async {
-    prefs = await SharedPreferences.getInstance();
-    await _getStarGroup();
-    if (_starGroupModel != null) {
-      fusionController.lastSubscription(starId!);
-      fusionController.starLinks(starId!);
-      fusionController.starSubscriptions(starId!);
-      await prefs.setString("_starId", starId!);
-      Get.offAllNamed('/passcode');
-    } else {
-      log("not found");
+  // _getData() async {
+  //   prefs = await SharedPreferences.getInstance();
+  //   await _getStarGroup();
+  //   if (_starGroupModel != null) {
+  //     await fusionController.lastSubscription(starId!);
+  //     await fusionController.starLinks(starId!);
+  //     await fusionController.starSubscriptions(starId!);
+  //     await prefs.setString("_starId", starId!);
+  //     await _getLastSubscription();
+  //     // Get.offAllNamed('/passcode');
+  //     DateTime endDate = DateTime.parse(
+  //         (_lastSubscriptionModel?.licenseInfo?.endDate).toString());
+  //     log(endDate.toString());
+  //   } else {
+  //     log("not found");
+  //   }
+  // }
+  Future<void> _getData() async {
+    try {
+      prefs = await SharedPreferences.getInstance();
+      await _getStarGroup();
+
+      if (_starGroupModel == null) {
+        log("Star group not found");
+        return;
+      }
+      await Future.wait([
+        fusionController.lastSubscription(starId!),
+        fusionController.starLinks(starId!),
+        fusionController.starSubscriptions(starId!),
+        prefs.setString("_starId", starId!)
+      ]);
+      await _getLastSubscription();
+      String? passcode = prefs.getString('user_passcode');
+      if (passcode!.isNotEmpty) {
+        Get.offNamed('/existingPasscode');
+      } else {
+        Get.offAllNamed('/passcode');
+      }
+    } catch (e) {
+      log("An error occurred while getting data: $e");
     }
   }
 
@@ -210,6 +245,9 @@ class _StaridViewState extends State<StaridView> {
           jsonDecode(lastSubscriptionJson);
       LastSubscriptionModel lastSubscription =
           LastSubscriptionModel.fromJson(lastSubscriptionMap);
+      setState(() {
+        _lastSubscriptionModel = lastSubscription;
+      });
     } else {
       log('No star group found in preferences');
     }
