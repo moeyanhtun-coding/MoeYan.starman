@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:starman/state_management/passcode_controller.dart';
 import 'package:starman/views/home_view.dart';
+import 'package:starman/views/report_view/cfd_report_view.dart';
 import 'package:starman/widgets/loading_widget.dart';
 import 'package:starman/widgets/passcode_pad_widget.dart';
 
@@ -14,7 +15,7 @@ class _ExistingPasscodeViewState extends State<ExistingPasscodeView> {
   final PasscodeController _controller = PasscodeController();
   final List<FocusNode> _focusNodes = List.generate(4, (_) => FocusNode());
   final List<TextEditingController> _textControllers =
-  List.generate(4, (_) => TextEditingController());
+      List.generate(4, (_) => TextEditingController());
   bool _isLoading = false;
 
   @override
@@ -46,7 +47,7 @@ class _ExistingPasscodeViewState extends State<ExistingPasscodeView> {
     });
 
     Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => HomeView()));
+        MaterialPageRoute(builder: (context) => CfdReportView()));
   }
 
   void _validatePasscode() async {

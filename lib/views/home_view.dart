@@ -44,32 +44,34 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: _starGroupModel == null
-          ? null
-          : NavBar(
-              starId: _starGroupModel!.starId.toString(),
-              reaminingDate: _reamaingDay.toString(),
-            ),
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text('Home Page'),
-        backgroundColor: Colors.grey[600],
-      ),
-      body: _starGroupModel == null
-          ? const Center(
-              child: CircularProgressIndicator()) // Show a loading indicator
-          : const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Home Page',
-                    style: TextStyle(fontSize: 30.0),
-                  ),
-                ],
+    return SafeArea(
+      child: Scaffold(
+        drawer: _starGroupModel == null
+            ? null
+            : NavBar(
+                starId: _starGroupModel!.starId.toString(),
+                reaminingDate: _reamaingDay.toString(),
               ),
-            ),
+        appBar: AppBar(
+          centerTitle: true,
+          title: const Text('Home Page'),
+          backgroundColor: Colors.grey[600],
+        ),
+        body: _starGroupModel == null
+            ? const Center(
+                child: CircularProgressIndicator()) // Show a loading indicator
+            : const Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Home Page',
+                      style: TextStyle(fontSize: 30.0),
+                    ),
+                  ],
+                ),
+              ),
+      ),
     );
   }
 
