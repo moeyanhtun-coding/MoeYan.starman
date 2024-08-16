@@ -22,7 +22,6 @@ class _ErrorViewState extends State<ErrorView> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: Container(
         decoration: Background.getBackground(),
         child: Center(
@@ -33,7 +32,8 @@ class _ErrorViewState extends State<ErrorView> {
                 padding: const EdgeInsets.only(top: 50),
                 child: Image.asset(
                   'assets/logo.png',
-                  width: 150,height: 150,
+                  width: 150,
+                  height: 150,
                 ),
               ),
               SizedBox(
@@ -68,11 +68,13 @@ class _ErrorViewState extends State<ErrorView> {
               ),
 
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 80),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 80),
                 child: GestureDetector(
                   onTap: (_tryAgain),
                   child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                       decoration: BoxDecoration(
                         color: Theme.of(context).primaryColor,
                         borderRadius: BorderRadius.circular(12),

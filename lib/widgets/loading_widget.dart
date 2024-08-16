@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 class LoadingOverlay extends StatelessWidget {
   final String message;
 
-  const LoadingOverlay({Key? key, this.message = 'Loading...'}) : super(key: key);
+  const LoadingOverlay({Key? key, this.message = 'Loading...'})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -13,14 +14,8 @@ class LoadingOverlay extends StatelessWidget {
         children: [
           CircularProgressIndicator(),
           SizedBox(height: 20),
-          Text(
-              message,
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight:
-                  FontWeight.bold
-              )
-          ),
+          Text(message,
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         ],
       ),
     );

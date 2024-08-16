@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:starman/state_management/passcode_controller.dart';
 import 'package:starman/views/home_view.dart';
 import 'package:starman/views/report_view/cfd_report_view.dart';
+import 'package:starman/views/report_view/profitlost_report_view.dart';
 import 'package:starman/widgets/loading_widget.dart';
 import 'package:starman/widgets/passcode_pad_widget.dart';
 
@@ -47,7 +48,7 @@ class _ExistingPasscodeViewState extends State<ExistingPasscodeView> {
     });
 
     Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => CfdReportView()));
+        MaterialPageRoute(builder: (context) => ProfitLostReportView()));
   }
 
   void _validatePasscode() async {
