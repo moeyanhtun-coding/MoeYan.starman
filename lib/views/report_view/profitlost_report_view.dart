@@ -1,15 +1,20 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
+import 'package:archive/archive.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:starman/controllers/fusion_controller.dart';
 import 'package:starman/models/last_subscription_model/last_subscription_model.dart';
 import 'package:starman/models/star_group_model/star_group_model.dart';
 import 'package:starman/widgets/navbar_widget.dart';
 
 late SharedPreferences prefs;
 StarGroupModel? _starGroupModel;
+FusionController fusionController = FusionController();
 
 class ProfitLostReportView extends StatefulWidget {
   const ProfitLostReportView({super.key});
@@ -61,7 +66,9 @@ class _ProfitLostReportViewState extends State<ProfitLostReportView> {
           ),
           actions: [
             IconButton(
-              onPressed: () {},
+              onPressed: () async {
+                await _downLoadData();
+              },
               icon: Icon(
                 Icons.cloud_download,
                 size: MediaQuery.sizeOf(context).width * 0.07,
@@ -543,5 +550,66 @@ class _ProfitLostReportViewState extends State<ProfitLostReportView> {
         );
       },
     );
+  }
+
+  Future<void> _downLoadData() async {
+    try {
+      var file = await fusionController.cfdData(
+        "BF76-FE5F-6DD0-9FFD",
+        "PL",
+      );
+
+      if (file != null) {
+        log('Downloaded file path: ${file.path}');
+        // Extract the ZIP file
+        await extractZipFile(file);
+        log("Extraction complete");
+      } else {
+        log("File download failed");
+      }
+    } catch (e) {
+      log('Error during download: $e');
+    }
+  }
+
+  Future<void> extractZipFile(File zipFile) async {
+    try {
+      // Get the application's document directory to extract the files
+      final directory = await getApplicationDocumentsDirectory();
+      final extractionPath = directory.path;
+      log('Extraction path: $extractionPath');
+
+      // Ensure the extraction directory exists
+      await Directory(extractionPath).create(recursive: true);
+
+      // Decode the ZIP file with password
+      Archive archive = ZipDecoder().decodeBytes(
+        zipFile.readAsBytesSync(),
+        verify: true,
+        password: 'Digital Fusion 2018',
+      );
+
+      log('Archive contains ${archive.length} files:');
+      for (final file in archive) {
+        log('File: ${file.name}, Size: ${file.size}');
+
+        final filename = '$extractionPath/${file.name}';
+        if (file.isFile) {
+          final outFile = File(filename);
+          await outFile.create(recursive: true);
+          await outFile.writeAsBytes(file.content as List<int>);
+          log('File created: ${outFile.path}');
+        } else {
+          // If it's a directory, ensure it exists
+          await Directory(filename).create(recursive: true);
+          log('Directory created: $filename');
+        }
+      }
+
+      log('ZIP file extracted successfully to $extractionPath');
+    } catch (e, stacktrace) {
+      log('Error during extraction: $e');
+      log('Stacktrace: $stacktrace');
+    }
   }
 }
