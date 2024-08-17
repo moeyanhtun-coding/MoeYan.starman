@@ -584,29 +584,34 @@ class _CfdReportViewState extends State<CfdReportView> {
       // Ensure the extraction directory exists
       await Directory(extractionPath).create(recursive: true);
 
-      // Extract the ZIP file using the password (if required)
+      // Decode the ZIP file with password
       Archive archive = ZipDecoder().decodeBytes(
         zipFile.readAsBytesSync(),
-        verify: true, // optional, to verify file integrity
+        verify: true,
         password: 'Digital Fusion 2018',
       );
 
-      // Iterate over the files in the archive
+      log('Archive contains ${archive.length} files:');
       for (final file in archive) {
+        log('File: ${file.name}, Size: ${file.size}');
+
         final filename = '$extractionPath/${file.name}';
         if (file.isFile) {
           final outFile = File(filename);
           await outFile.create(recursive: true);
           await outFile.writeAsBytes(file.content as List<int>);
+          log('File created: ${outFile.path}');
         } else {
           // If it's a directory, ensure it exists
           await Directory(filename).create(recursive: true);
+          log('Directory created: $filename');
         }
       }
 
       log('ZIP file extracted successfully to $extractionPath');
-    } catch (e) {
+    } catch (e, stacktrace) {
       log('Error during extraction: $e');
+      log('Stacktrace: $stacktrace');
     }
   }
 }
