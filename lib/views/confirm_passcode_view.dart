@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:starman/state_management/passcode_controller.dart';
 import 'package:starman/views/home_view.dart';
 import 'package:starman/views/passcode_view.dart';
+import 'package:starman/views/report_view/cfd_report_view.dart';
 import 'package:starman/widgets/loading_widget.dart';
 import 'package:starman/widgets/passcode_pad_widget.dart';
 
@@ -19,7 +20,7 @@ class _ConfirmPasscodeScreenState extends State<ConfirmPasscodeScreen> {
   final PasscodeController _controller = PasscodeController();
   final List<FocusNode> _focusNodes = List.generate(4, (_) => FocusNode());
   final List<TextEditingController> _textControllers =
-  List.generate(4, (_) => TextEditingController());
+      List.generate(4, (_) => TextEditingController());
   bool _isLoading = false;
 
   @override
@@ -53,7 +54,7 @@ class _ConfirmPasscodeScreenState extends State<ConfirmPasscodeScreen> {
       });
 
       Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => HomeView()));
+          MaterialPageRoute(builder: (context) => CfdReportView()));
     } else {
       _showError('Passcodes do not match');
       _clearPasscodeFields();

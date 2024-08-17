@@ -59,7 +59,9 @@ class _CfdReportViewState extends State<CfdReportView> {
           ),
           actions: [
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                _downLoadData();
+              },
               icon: Icon(
                 Icons.cloud_download,
                 size: MediaQuery.sizeOf(context).width * 0.07,
@@ -464,5 +466,9 @@ class _CfdReportViewState extends State<CfdReportView> {
         );
       },
     );
+  }
+
+  _downLoadData() {
+    return log("hello");
   }
 }

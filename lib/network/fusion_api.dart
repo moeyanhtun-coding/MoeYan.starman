@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 
 //* Common PostRequestAPI *//
@@ -90,6 +91,7 @@ class FusionApi {
     return response.body;
   }
 
+  Future<void> getCfdData() async {}
 /*
 
 https://api.fusionmyanmar.com/rest/starman/getStarGroup
