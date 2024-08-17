@@ -1,12 +1,18 @@
 import 'dart:convert';
 import 'dart:developer';
-
+import 'dart:io';
+import 'package:archive/archive.dart';
+import 'package:flutter_archive/flutter_archive.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:starman/models/last_subscription_model/last_subscription_model.dart';
 import 'package:starman/models/star_group_model/star_group_model.dart';
 import 'package:starman/widgets/navbar_widget.dart';
+import 'package:flutter/foundation.dart';
+
+import '../../controllers/fusion_controller.dart';
 
 late SharedPreferences prefs;
 StarGroupModel? _starGroupModel;
@@ -19,6 +25,7 @@ class CfdReportView extends StatefulWidget {
 }
 
 class _CfdReportViewState extends State<CfdReportView> {
+  final FusionController fusionController = FusionController();
   int? _reamaingDay;
   LastSubscriptionModel? _lastSubscriptionModel;
   String _selectedWarehouse = 'A'; // Default warehouse selection
@@ -61,8 +68,8 @@ class _CfdReportViewState extends State<CfdReportView> {
           ),
           actions: [
             IconButton(
-              onPressed: () {
-                _downLoadData();
+              onPressed: () async {
+                await _downLoadData();
               },
               icon: Icon(
                 Icons.cloud_download,
@@ -547,7 +554,59 @@ class _CfdReportViewState extends State<CfdReportView> {
     );
   }
 
-  _downLoadData() {
-    return log("hello");
+  Future<void> _downLoadData() async {
+    try {
+      var file = await fusionController.cfdData(
+        "BF76-FE5F-6DD0-9FFD",
+        "CFD",
+      );
+
+      if (file != null) {
+        log('Downloaded file path: ${file.path}');
+        // Extract the ZIP file
+        await extractZipFile(file);
+        log("Extraction complete");
+      } else {
+        log("File download failed");
+      }
+    } catch (e) {
+      log('Error during download: $e');
+    }
+  }
+
+  Future<void> extractZipFile(File zipFile) async {
+    try {
+      // Get the application's document directory to extract the files
+      final directory = await getApplicationDocumentsDirectory();
+      final extractionPath = directory.path;
+      log('Extraction path: $extractionPath');
+
+      // Ensure the extraction directory exists
+      await Directory(extractionPath).create(recursive: true);
+
+      // Extract the ZIP file using the password (if required)
+      Archive archive = ZipDecoder().decodeBytes(
+        zipFile.readAsBytesSync(),
+        verify: true, // optional, to verify file integrity
+        password: 'Digital Fusion 2018',
+      );
+
+      // Iterate over the files in the archive
+      for (final file in archive) {
+        final filename = '$extractionPath/${file.name}';
+        if (file.isFile) {
+          final outFile = File(filename);
+          await outFile.create(recursive: true);
+          await outFile.writeAsBytes(file.content as List<int>);
+        } else {
+          // If it's a directory, ensure it exists
+          await Directory(filename).create(recursive: true);
+        }
+      }
+
+      log('ZIP file extracted successfully to $extractionPath');
+    } catch (e) {
+      log('Error during extraction: $e');
+    }
   }
 }

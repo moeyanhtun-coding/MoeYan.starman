@@ -91,7 +91,20 @@ class FusionApi {
     return response.body;
   }
 
-  Future<void> getCfdData() async {}
+  Future<http.Response> getCfdData(
+    String username,
+    String password,
+    String endpoint,
+    Map<String, String> queryParams,
+  ) async {
+    final response = await _rootPostRequest(
+      endpoint: endpoint,
+      queryParams: queryParams,
+      username: username,
+      password: password,
+    );
+    return response;
+  }
 /*
 
 https://api.fusionmyanmar.com/rest/starman/getStarGroup

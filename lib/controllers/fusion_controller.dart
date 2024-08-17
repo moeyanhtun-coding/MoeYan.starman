@@ -1,3 +1,7 @@
+import 'dart:developer';
+import 'dart:io';
+
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:starman/network/fusion_api.dart';
 
@@ -73,6 +77,27 @@ class FusionController {
       await prefs.setString('_starSubscriptions', starSubscriptions);
     } catch (e) {
       throw Exception(e.toString());
+    }
+  }
+
+  Future<File?> cfdData(String userId, String type) async {
+    try {
+      var queryParameters = {
+        'user_id': userId,
+        'type': type,
+      };
+      var response = await FusionApi().getCfdData(
+        'fusion_dev',
+        'fusion_dev',
+        "/rest/starman/downloadFinancialReport",
+        queryParameters,
+      );
+      final directory = await getTemporaryDirectory();
+      final filePath = '${directory.path}/downloaded.zip';
+      final file = File(filePath);
+      return file.writeAsBytes(response.bodyBytes);
+    } catch (e) {
+      log(e.toString());
     }
   }
 }
