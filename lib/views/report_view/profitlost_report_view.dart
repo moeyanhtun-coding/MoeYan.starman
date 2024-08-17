@@ -11,14 +11,14 @@ import 'package:starman/widgets/navbar_widget.dart';
 late SharedPreferences prefs;
 StarGroupModel? _starGroupModel;
 
-class CfdReportView extends StatefulWidget {
-  const CfdReportView({super.key});
+class ProfitLostReportView extends StatefulWidget {
+  const ProfitLostReportView({super.key});
 
   @override
-  State<CfdReportView> createState() => _CfdReportViewState();
+  State<ProfitLostReportView> createState() => _ProfitLostReportViewState();
 }
 
-class _CfdReportViewState extends State<CfdReportView> {
+class _ProfitLostReportViewState extends State<ProfitLostReportView> {
   int? _reamaingDay;
   LastSubscriptionModel? _lastSubscriptionModel;
   String _selectedWarehouse = 'A'; // Default warehouse selection
@@ -61,9 +61,7 @@ class _CfdReportViewState extends State<CfdReportView> {
           ),
           actions: [
             IconButton(
-              onPressed: () {
-                _downLoadData();
-              },
+              onPressed: () {},
               icon: Icon(
                 Icons.cloud_download,
                 size: MediaQuery.sizeOf(context).width * 0.07,
@@ -545,9 +543,5 @@ class _CfdReportViewState extends State<CfdReportView> {
         );
       },
     );
-  }
-
-  _downLoadData() {
-    return log("hello");
   }
 }

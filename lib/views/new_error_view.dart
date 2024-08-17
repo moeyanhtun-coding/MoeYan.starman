@@ -16,10 +16,8 @@ class _NewErrorViewState extends State<NewErrorView> {
     super.initState();
   }
 
-
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: Container(
         decoration: Background.getBackground(),
         child: Center(
@@ -28,8 +26,11 @@ class _NewErrorViewState extends State<NewErrorView> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(top: 50),
-                child: Image.asset('assets/logo.png',
-                  width: 150,height: 150,),
+                child: Image.asset(
+                  'assets/logo.png',
+                  width: 150,
+                  height: 150,
+                ),
               ),
               SizedBox(
                 height: 80,
@@ -61,7 +62,6 @@ class _NewErrorViewState extends State<NewErrorView> {
               SizedBox(
                 height: 180,
               ),
-
             ],
           ),
         ),

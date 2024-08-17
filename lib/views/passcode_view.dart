@@ -12,7 +12,7 @@ class _PasscodeViewState extends State<PasscodeView> {
   final PasscodeController _controller = PasscodeController();
   final List<FocusNode> _focusNodes = List.generate(4, (_) => FocusNode());
   final List<TextEditingController> _textControllers =
-  List.generate(4, (_) => TextEditingController());
+      List.generate(4, (_) => TextEditingController());
 
   @override
   void dispose() {
@@ -111,5 +111,4 @@ class _PasscodeViewState extends State<PasscodeView> {
       ),
     );
   }
-
 }

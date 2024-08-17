@@ -5,6 +5,8 @@ import 'package:starman/views/existing_passcode_view.dart';
 import 'package:get/route_manager.dart';
 import 'package:starman/views/home_view.dart';
 import 'package:starman/views/new_error_view.dart';
+import 'package:starman/views/report_view/cfd_report_view.dart';
+import 'package:starman/views/report_view/profitlost_report_view.dart';
 import 'package:starman/views/starid_view.dart';
 import 'package:starman/views/passcode_view.dart';
 import 'package:starman/views/splashscreen.dart';
@@ -26,7 +28,8 @@ class MyApp extends StatelessWidget {
     GetPage(name: '/home', page: () => HomeView()),
     GetPage(name: '/error', page: () => ErrorView()),
     GetPage(name: '/existingPasscode', page: () => ExistingPasscodeView()),
-    GetPage(name: '/existingPasscode', page: () => ExistingPasscodeView())
+    GetPage(name: '/profitlost', page: () => ProfitLostReportView()),
+    GetPage(name: '/cfdreport', page: () => CfdReportView()),
   ];
 
   MyApp({super.key});
