@@ -78,7 +78,12 @@ class NavBar extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          _listTile("Home", Icons.home, () {}),
+          _listTile("အရှုံးအမြတ်အစီရင်ခံစာ", Icons.home, () {
+            Get.offAndToNamed('profitlost');
+          }),
+          _listTile("ငွေအဝင်အထွက်အစီရင်ခံစာ", Icons.money, () {
+            Get.offAndToNamed('cfdreport');
+          }),
           _listTile("Setting", Icons.settings, () {}),
         ],
       ),

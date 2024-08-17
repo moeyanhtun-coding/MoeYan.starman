@@ -56,7 +56,7 @@ class _CfdReportViewState extends State<CfdReportView> {
               ),
         appBar: AppBar(
           title: Text(
-            'အရှုံအမြတ်အစီရင်ခံစာ',
+            'ငွေအဝင်အထွက်အစီရင်ခံစာ',
             style: TextStyle(fontSize: size(0.045)),
           ),
           actions: [
