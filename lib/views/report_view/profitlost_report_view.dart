@@ -554,7 +554,7 @@ class _ProfitLostReportViewState extends State<ProfitLostReportView> {
 
   Future<void> _downLoadData() async {
     try {
-      var file = await fusionController.cfdData(
+      var file = await fusionController.cfData(
         "BF76-FE5F-6DD0-9FFD",
         "PL",
       );

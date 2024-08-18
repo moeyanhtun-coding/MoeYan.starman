@@ -80,7 +80,7 @@ class FusionController {
     }
   }
 
-  Future<File?> cfdData(String userId, String type) async {
+  Future<File?> cfData(String userId, String type) async {
     try {
       var queryParameters = {
         'user_id': userId,

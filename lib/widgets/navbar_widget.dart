@@ -82,7 +82,7 @@ class NavBar extends StatelessWidget {
             Get.offAndToNamed('profitlost');
           }),
           _listTile("ငွေအဝင်အထွက်အစီရင်ခံစာ", Icons.money, () {
-            Get.offAndToNamed('cfdreport');
+            Get.offAndToNamed('cfreport');
           }),
           _listTile("Setting", Icons.settings, () {}),
         ],

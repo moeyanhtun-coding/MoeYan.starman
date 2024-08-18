@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:starman/controllers/fusion_controller.dart';
+import 'package:starman/models/cf_model/cf_model.dart';
 import 'package:starman/models/last_subscription_model/last_subscription_model.dart';
 import 'package:starman/models/star_group_model/star_group_model.dart';
 import 'package:starman/models/star_links_model/star_links_model.dart';
@@ -28,6 +29,7 @@ class _StaridViewState extends State<StaridView> {
   LastSubscriptionModel? _lastSubscriptionModel;
   String? starId = '';
   bool _isButtonDisabled = false;
+  CfModel? _cfModel;
 
   @override
   void initState() {
@@ -167,23 +169,6 @@ class _StaridViewState extends State<StaridView> {
     );
   }
 
-  // _getData() async {
-  //   prefs = await SharedPreferences.getInstance();
-  //   await _getStarGroup();
-  //   if (_starGroupModel != null) {
-  //     await fusionController.lastSubscription(starId!);
-  //     await fusionController.starLinks(starId!);
-  //     await fusionController.starSubscriptions(starId!);
-  //     await prefs.setString("_starId", starId!);
-  //     await _getLastSubscription();
-  //     // Get.offAllNamed('/passcode');
-  //     DateTime endDate = DateTime.parse(
-  //         (_lastSubscriptionModel?.licenseInfo?.endDate).toString());
-  //     log(endDate.toString());
-  //   } else {
-  //     log("not found");
-  //   }
-  // }
   Future<void> _getData() async {
     try {
       prefs = await SharedPreferences.getInstance();
@@ -281,6 +266,17 @@ class _StaridViewState extends State<StaridView> {
     } else {
       // Handle the case where the string is not available
       log('No star group found in preferences');
+    }
+  }
+
+  Future<void> _getCf() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? starCf = prefs.getString('_satrCF');
+    var decodeJson = jsonDecode(starCf!);
+    if (starCf != null) {
+      List<Map<String, dynamic>> starCf =
+          List<Map<String, dynamic>>.from(decodeJson);
+      List<CfModel> cfData = CfModel.fromJsonList(starCf);
     }
   }
 }

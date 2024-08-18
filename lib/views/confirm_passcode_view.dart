@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:starman/state_management/passcode_controller.dart';
 import 'package:starman/views/home_view.dart';
 import 'package:starman/views/passcode_view.dart';
-import 'package:starman/views/report_view/cfd_report_view.dart';
+import 'package:starman/views/report_view/cf_report_view.dart';
 import 'package:starman/widgets/loading_widget.dart';
 import 'package:starman/widgets/passcode_pad_widget.dart';
 
@@ -54,7 +54,7 @@ class _ConfirmPasscodeScreenState extends State<ConfirmPasscodeScreen> {
       });
 
       Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => CfdReportView()));
+          MaterialPageRoute(builder: (context) => CfReportView()));
     } else {
       _showError('Passcodes do not match');
       _clearPasscodeFields();
