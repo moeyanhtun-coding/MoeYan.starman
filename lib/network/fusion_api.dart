@@ -91,7 +91,7 @@ class FusionApi {
     return response.body;
   }
 
-  Future<http.Response> getCfdData(
+  Future<http.Response> getReportData(
     String username,
     String password,
     String endpoint,

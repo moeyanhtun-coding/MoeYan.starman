@@ -9,8 +9,11 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:starman/controllers/fusion_controller.dart';
 import 'package:starman/models/last_subscription_model/last_subscription_model.dart';
+import 'package:starman/models/report_model/pl_model/pl_model.dart';
 import 'package:starman/models/star_group_model/star_group_model.dart';
 import 'package:starman/widgets/navbar_widget.dart';
+
+import 'cf_report_view.dart';
 
 late SharedPreferences prefs;
 StarGroupModel? _starGroupModel;
@@ -552,18 +555,24 @@ class _ProfitLostReportViewState extends State<ProfitLostReportView> {
     );
   }
 
+  Future<void> _getCfData() async {
+    try {
+      await _downLoadData();
+      await _getCf();
+    } catch (e) {
+      log('Error in _getCfData: $e');
+    }
+  }
+
   Future<void> _downLoadData() async {
     try {
-      var file = await fusionController.cfData(
-        "BF76-FE5F-6DD0-9FFD",
-        "PL",
-      );
+      var file = await fusionController.reportData("BF76-FE5F-6DD0-9FFD", "CF");
 
       if (file != null) {
-        log('Downloaded file path: ${file.path}');
-        // Extract the ZIP file
         await extractZipFile(file);
-        log("Extraction complete");
+        String cfJson = await readJsonFile(filePath);
+        await prefs.setString("_satrCF", cfJson);
+        log("File Download Success");
       } else {
         log("File download failed");
       }
@@ -574,42 +583,67 @@ class _ProfitLostReportViewState extends State<ProfitLostReportView> {
 
   Future<void> extractZipFile(File zipFile) async {
     try {
-      // Get the application's document directory to extract the files
       final directory = await getApplicationDocumentsDirectory();
       final extractionPath = directory.path;
-      log('Extraction path: $extractionPath');
 
-      // Ensure the extraction directory exists
       await Directory(extractionPath).create(recursive: true);
-
-      // Decode the ZIP file with password
       Archive archive = ZipDecoder().decodeBytes(
         zipFile.readAsBytesSync(),
         verify: true,
         password: 'Digital Fusion 2018',
       );
-
+//dev code
       log('Archive contains ${archive.length} files:');
       for (final file in archive) {
-        log('File: ${file.name}, Size: ${file.size}');
-
         final filename = '$extractionPath/${file.name}';
         if (file.isFile) {
           final outFile = File(filename);
           await outFile.create(recursive: true);
           await outFile.writeAsBytes(file.content as List<int>);
-          log('File created: ${outFile.path}');
         } else {
           // If it's a directory, ensure it exists
           await Directory(filename).create(recursive: true);
           log('Directory created: $filename');
         }
       }
-
-      log('ZIP file extracted successfully to $extractionPath');
     } catch (e, stacktrace) {
       log('Error during extraction: $e');
       log('Stacktrace: $stacktrace');
+    }
+  }
+
+  Future<String> readJsonFile(String path) async {
+    try {
+      final file = File(path);
+      // Check if the file exists
+      if (await file.exists()) {
+        // Read the file as a string
+        String contents = await file.readAsString();
+        return contents;
+      } else {
+        throw Exception("File not found at $path");
+      }
+    } catch (e) {
+      throw Exception("Error reading file: $e");
+    }
+  }
+
+  Future<void> _getCf() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      String? starCf = prefs.getString('_satrCF');
+      if (starCf != null) {
+        var decodeJson = jsonDecode(starCf);
+        List<Map<String, dynamic>> starCfList =
+            List<Map<String, dynamic>>.from(decodeJson);
+        List<PlModel> plData = PlModel.fromJsonList(starCfList);
+        log(plData.toString());
+        PlModel thisMonthData =
+            plData.firstWhere((x) => x.starFilter == "This Month");
+        log(thisMonthData.toString());
+      }
+    } catch (e) {
+      log('Error in _getCf: $e');
     }
   }
 }

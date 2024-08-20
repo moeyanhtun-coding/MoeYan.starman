@@ -88,6 +88,10 @@ class PlModel {
     return mapEquals(other.toJson(), toJson());
   }
 
+  static List<PlModel> fromJsonList(List<dynamic> jsonList) {
+    return jsonList.map((json) => PlModel.fromJson(json)).toList();
+  }
+
   @override
   int get hashCode =>
       starSaleAmount.hashCode ^

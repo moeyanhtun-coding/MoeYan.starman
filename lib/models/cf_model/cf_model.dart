@@ -48,6 +48,7 @@ class CfModel {
         starFilter: json['starFilter'] as String?,
         starCurrency: json['starCurrency'] as String?,
       );
+
   static List<CfModel> fromJsonList(List<dynamic> jsonList) {
     return jsonList.map((json) => CfModel.fromJson(json)).toList();
   }

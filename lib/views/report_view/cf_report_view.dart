@@ -2,22 +2,22 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:archive/archive.dart';
-import 'package:flutter_archive/flutter_archive.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:starman/models/cf_model/cf_model.dart';
+import 'package:starman/models/custom_model/custom_model.dart';
 import 'package:starman/models/last_subscription_model/last_subscription_model.dart';
 import 'package:starman/models/star_group_model/star_group_model.dart';
+import 'package:starman/models/star_links_model/star_links_model.dart';
 import 'package:starman/widgets/navbar_widget.dart';
-import 'package:flutter/foundation.dart';
 
 import '../../controllers/fusion_controller.dart';
 
 late SharedPreferences prefs;
 StarGroupModel? _starGroupModel;
-final String filePath =
+const String filePath =
     "/data/user/0/com.example.starman/app_flutter/StarCF.json";
 
 class CfReportView extends StatefulWidget {
@@ -33,6 +33,9 @@ class _CfReportViewState extends State<CfReportView> {
   LastSubscriptionModel? _lastSubscriptionModel;
   String _selectedWarehouse = 'A'; // Default warehouse selection
   String _selectedDateFilter = 'Today'; // Default date filter selection
+  List<StarLinksModel>? _starLinksModel;
+  CfModel? thisMonthData;
+  StarLinksModel? _starLinkModel;
 
   @override
   void initState() {
@@ -96,7 +99,7 @@ class _CfReportViewState extends State<CfReportView> {
                 child: ListView(
                   children: [
                     _buildWarehouseDropdown(),
-                    SizedBox(height: 0.1),
+                    const SizedBox(height: 0.1),
                     _buildDateFilterDropdown(),
                     _totalCashInOut(89400, 0),
                     SizedBox(
@@ -171,13 +174,13 @@ class _CfReportViewState extends State<CfReportView> {
               ),
             );
           }).toList(),
-          underline: SizedBox(), // Removes underline from DropdownButton
+          underline: const SizedBox(), // Removes underline from DropdownButton
           style: const TextStyle(color: Colors.black, fontSize: 13),
         ),
-        Spacer(),
+        const Spacer(),
         Text(
           DateFormat('dd/MM/yyyy hh:mm a').format(DateTime.now()),
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 13,
             color: Colors.black,
             fontWeight: FontWeight.bold,
@@ -204,14 +207,14 @@ class _CfReportViewState extends State<CfReportView> {
               value: value,
               child: Text(
                 value,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 13,
                   color: Colors.black,
                 ),
               ),
             );
           }).toList(),
-          underline: SizedBox(), // Removes underline from DropdownButton
+          underline: const SizedBox(), // Removes underline from DropdownButton
           style: const TextStyle(color: Colors.black, fontSize: 13),
           dropdownColor: Colors.white,
         ),
@@ -228,7 +231,7 @@ class _CfReportViewState extends State<CfReportView> {
               color: Colors.black.withOpacity(0.3), // Shadow color with opacity
               spreadRadius: 1, // How much the shadow spreads
               blurRadius: 3,
-              offset: Offset(0, 3),
+              offset: const Offset(0, 3),
             ),
           ],
           border: Border.all(
@@ -253,7 +256,7 @@ class _CfReportViewState extends State<CfReportView> {
                 ),
                 IconButton(
                   onPressed: () {},
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.arrow_drop_down,
                     color: Colors.white,
                   ),
@@ -291,7 +294,7 @@ class _CfReportViewState extends State<CfReportView> {
               color: Colors.black.withOpacity(0.3), // Shadow color with opacity
               spreadRadius: 1, // How much the shadow spreads
               blurRadius: 3,
-              offset: Offset(0, 3),
+              offset: const Offset(0, 3),
             ),
           ],
           border: Border.all(
@@ -316,7 +319,7 @@ class _CfReportViewState extends State<CfReportView> {
                 ),
                 IconButton(
                   onPressed: () {},
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.arrow_drop_down,
                     color: Colors.white,
                   ),
@@ -444,18 +447,6 @@ class _CfReportViewState extends State<CfReportView> {
     );
   }
 
-  Widget _totalCashContainer(
-    int totalCash,
-  ) {
-    return Container(
-      color: Colors.greenAccent,
-      child: Padding(
-          padding: EdgeInsets.symmetric(
-              vertical: MediaQuery.sizeOf(context).width * 0.03),
-          child: _cashRow('စုစုပေါင်း(MMK)', 84900)),
-    );
-  }
-
   Widget _totalCash(String title, int price) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -559,8 +550,10 @@ class _CfReportViewState extends State<CfReportView> {
 
   Future<void> _getCfData() async {
     try {
-      await _downLoadData(); // Wait for this to complete
-      await _getCf(); // Wait for this to complete // Now this should log after everything else
+      await _downLoadData();
+      await _getCf("This Month");
+      await _getStarLinks();
+      await _getCustomData();
     } catch (e) {
       log('Error in _getCfData: $e');
     }
@@ -568,13 +561,11 @@ class _CfReportViewState extends State<CfReportView> {
 
   Future<void> _downLoadData() async {
     try {
-      var file = await fusionController.cfData("BF76-FE5F-6DD0-9FFD", "CF");
+      var file = await fusionController.reportData("BF76-FE5F-6DD0-9FFD", "CF");
 
       if (file != null) {
-        // Extract the ZIP file
         await extractZipFile(file);
         String cfJson = await readJsonFile(filePath);
-
         await prefs.setString("_satrCF", cfJson);
         log("File Download Success");
       } else {
@@ -587,24 +578,18 @@ class _CfReportViewState extends State<CfReportView> {
 
   Future<void> extractZipFile(File zipFile) async {
     try {
-      // Get the application's document directory to extract the files
       final directory = await getApplicationDocumentsDirectory();
       final extractionPath = directory.path;
 
-      // Ensure the extraction directory exists
       await Directory(extractionPath).create(recursive: true);
-
-      // Decode the ZIP file with password
       Archive archive = ZipDecoder().decodeBytes(
         zipFile.readAsBytesSync(),
         verify: true,
         password: 'Digital Fusion 2018',
       );
-
+//dev code
       log('Archive contains ${archive.length} files:');
       for (final file in archive) {
-        log('File: ${file.name}, Size: ${file.size}');
-
         final filename = '$extractionPath/${file.name}';
         if (file.isFile) {
           final outFile = File(filename);
@@ -625,7 +610,6 @@ class _CfReportViewState extends State<CfReportView> {
   Future<String> readJsonFile(String path) async {
     try {
       final file = File(path);
-
       // Check if the file exists
       if (await file.exists()) {
         // Read the file as a string
@@ -639,7 +623,7 @@ class _CfReportViewState extends State<CfReportView> {
     }
   }
 
-  Future<void> _getCf() async {
+  Future<void> _getCf(String date) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       String? starCf = prefs.getString('_satrCF');
@@ -648,12 +632,42 @@ class _CfReportViewState extends State<CfReportView> {
         List<Map<String, dynamic>> starCfList =
             List<Map<String, dynamic>>.from(decodeJson);
         List<CfModel> cfData = CfModel.fromJsonList(starCfList);
-        CfModel thisMonthData =
-            cfData.firstWhere((data) => data.starFilter == "This Month");
+        log(cfData.toString());
+        thisMonthData = cfData.firstWhere((x) => x.starFilter == date);
         log(thisMonthData.toString());
       }
     } catch (e) {
       log('Error in _getCf: $e');
+    }
+  }
+
+  Future<void> _getCustomData() async {
+    try {
+      CustomModel _model = CustomModel();
+      _model.starSaleAmount = thisMonthData!.starSalesAmount;
+      _model.warehouseName = _starLinkModel!.warehouseName;
+
+      log(_model.toString());
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  //* StarLinks *//
+  Future<void> _getStarLinks() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? starLinksJson = prefs.getString('_starLinks');
+    if (starLinksJson != null) {
+      var decodedJson = jsonDecode(starLinksJson);
+      List<Map<String, dynamic>> starLinksMap =
+          List<Map<String, dynamic>>.from(decodedJson);
+      List<StarLinksModel> starLinks =
+          StarLinksModel.fromJsonList(starLinksMap);
+      _starLinksModel = starLinks;
+      _starLinkModel =
+          _starLinksModel!.firstWhere((x) => x.warehouseName == "Warso");
+    } else {
+      log("No star links found in preferences");
     }
   }
 }

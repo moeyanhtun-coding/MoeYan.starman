@@ -80,13 +80,13 @@ class FusionController {
     }
   }
 
-  Future<File?> cfData(String userId, String type) async {
+  Future<File?> reportData(String userId, String type) async {
     try {
       var queryParameters = {
         'user_id': userId,
         'type': type,
       };
-      var response = await FusionApi().getCfdData(
+      var response = await FusionApi().getReportData(
         'fusion_dev',
         'fusion_dev',
         "/rest/starman/downloadFinancialReport",
@@ -95,6 +95,7 @@ class FusionController {
       final directory = await getTemporaryDirectory();
       final filePath = '${directory.path}/downloaded.zip';
       final file = File(filePath);
+      // file = downloaded.zip
       return file.writeAsBytes(response.bodyBytes);
     } catch (e) {
       log(e.toString());
