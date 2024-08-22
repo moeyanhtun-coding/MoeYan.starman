@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:starman/models/cf_model/cf_model.dart';
+import 'package:starman/models/custom_model/custom_model.dart';
 import 'package:starman/models/last_subscription_model/last_subscription_model.dart';
 import 'package:starman/models/star_group_model/star_group_model.dart';
 import 'package:starman/models/star_links_model/star_links_model.dart';
@@ -552,6 +553,7 @@ class _CfReportViewState extends State<CfReportView> {
       await _downLoadData();
       await _getCf("This Month");
       await _getStarLinks();
+      await _getCustomData();
     } catch (e) {
       log('Error in _getCfData: $e');
     }
@@ -636,6 +638,18 @@ class _CfReportViewState extends State<CfReportView> {
       }
     } catch (e) {
       log('Error in _getCf: $e');
+    }
+  }
+
+  Future<void> _getCustomData() async {
+    try {
+      CustomModel _model = CustomModel();
+      _model.starSaleAmount = thisMonthData!.starSalesAmount;
+      _model.warehouseName = _starLinkModel!.warehouseName;
+
+      log(_model.toString());
+    } catch (e) {
+      log(e.toString());
     }
   }
 
