@@ -29,12 +29,12 @@ class CfReportView extends StatefulWidget {
 class _CfReportViewState extends State<CfReportView> {
   final FusionController fusionController = FusionController();
   int? _reamaingDay;
+  List<String> _warehouse = [];
   LastSubscriptionModel? _lastSubscriptionModel;
-  String _selectedWarehouse = 'A'; // Default warehouse selection
+  String _selectedWarehouse = "Warso"; // Default warehouse selection
   String _selectedDateFilter = 'Today'; // Default date filter selection
   List<StarLinksModel>? _starLinksModel;
   CfModel? thisMonthData;
-  StarLinksModel? _starLinkModel;
 
   @override
   void initState() {
@@ -50,6 +50,8 @@ class _CfReportViewState extends State<CfReportView> {
   Future<void> _initializeData() async {
     await _getStarGroup();
     await _getLastSubscription();
+    await _getStarLinks();
+    await _getWarehouse();
     _reamaingDay = await _remainingDate();
     if (_reamaingDay! < 10) {
       _remainingBox();
@@ -99,7 +101,7 @@ class _CfReportViewState extends State<CfReportView> {
                   children: [
                     _buildWarehouseDropdown(),
                     const SizedBox(height: 0.1),
-                    _buildDateFilterDropdown(),
+                    // _buildDateFilterDropdown(),
                     _totalCashInOut(89400, 0),
                     SizedBox(
                       height: MediaQuery.sizeOf(context).width * 0.02,
@@ -149,33 +151,32 @@ class _CfReportViewState extends State<CfReportView> {
   Widget _buildWarehouseDropdown() {
     return Row(
       children: [
-        DropdownButton<String>(
-          value: _selectedWarehouse,
-          onChanged: (String? newValue) {
-            setState(() {
-              _selectedWarehouse = newValue!;
-            });
-          },
-          items: <String>['Warehouse', 'A', 'B', 'C', 'D', 'E', 'F']
-              .map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value == 'Warehouse' ? null : value,
-              enabled: value != 'Warehouse',
-              child: Text(
-                value,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: value == 'Warehouse'
-                      ? FontWeight.bold
-                      : FontWeight.normal,
-                  color: value == 'Warehouse' ? Colors.grey : Colors.black,
-                ),
-              ),
-            );
-          }).toList(),
-          underline: const SizedBox(), // Removes underline from DropdownButton
-          style: const TextStyle(color: Colors.black, fontSize: 13),
-        ),
+        _warehouse.isNotEmpty
+            ? DropdownButton<String>(
+                value: _selectedWarehouse,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedWarehouse = newValue!;
+                  });
+                },
+                items: _warehouse.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(
+                      value,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.black,
+                      ),
+                    ),
+                  );
+                }).toList(),
+                underline:
+                    const SizedBox(), // Removes underline from DropdownButton
+                style: const TextStyle(color: Colors.black, fontSize: 13),
+              )
+            : const SizedBox
+                .shrink(), // Return an empty widget if _warehouse is empty
         const Spacer(),
         Text(
           DateFormat('dd/MM/yyyy hh:mm a').format(DateTime.now()),
@@ -189,37 +190,36 @@ class _CfReportViewState extends State<CfReportView> {
     );
   }
 
-  Widget _buildDateFilterDropdown() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        DropdownButton<String>(
-          value: _selectedDateFilter,
-          onChanged: (String? newValue) {
-            setState(() {
-              _selectedDateFilter = newValue!;
-            });
-          },
-          items: <String>['Today', 'Yesterday', 'This Month', 'Last Month']
-              .map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(
-                value,
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: Colors.black,
-                ),
-              ),
-            );
-          }).toList(),
-          underline: const SizedBox(), // Removes underline from DropdownButton
-          style: const TextStyle(color: Colors.black, fontSize: 13),
-          dropdownColor: Colors.white,
-        ),
-      ],
-    );
-  }
+  // Widget _buildDateFilterDropdown() {
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.end,
+  //     children: [
+  //       DropdownButton<String>(
+  //         value: _selectedDateFilter,
+  //         onChanged: (String? newValue) {
+  //           setState(() {
+  //             _selectedDateFilter = newValue!;
+  //           });
+  //         },
+  //         items: _warehouse.map<DropdownMenuItem<String>>((String value) {
+  //           return DropdownMenuItem<String>(
+  //             value: _warehouse.first,
+  //             child: Text(
+  //               value,
+  //               style: const TextStyle(
+  //                 fontSize: 13,
+  //                 color: Colors.black,
+  //               ),
+  //             ),
+  //           );
+  //         }).toList(),
+  //         underline: const SizedBox(), // Removes underline from DropdownButton
+  //         style: const TextStyle(color: Colors.black, fontSize: 13),
+  //         dropdownColor: Colors.white,
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Widget _cashInTable() {
     return Container(
@@ -605,6 +605,16 @@ class _CfReportViewState extends State<CfReportView> {
     }
   }
 
+  Future<void> _getWarehouse() async {
+    if (_starLinksModel != null) {
+      for (int i = 0; i < _starLinksModel!.length; i++) {
+        _warehouse.add(_starLinksModel![i].warehouseName.toString());
+      }
+    }
+
+    log(_warehouse.toString());
+  }
+
   Future<String> readJsonFile(String path) async {
     try {
       final file = File(path);
@@ -650,8 +660,6 @@ class _CfReportViewState extends State<CfReportView> {
       List<StarLinksModel> starLinks =
           StarLinksModel.fromJsonList(starLinksMap);
       _starLinksModel = starLinks;
-      _starLinkModel =
-          _starLinksModel!.firstWhere((x) => x.warehouseName == "Warso");
     } else {
       log("No star links found in preferences");
     }
