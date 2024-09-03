@@ -84,6 +84,9 @@ class NavBar extends StatelessWidget {
           _listTile("ငွေအဝင်အထွက်အစီရင်ခံစာ", Icons.money, () {
             Get.offAndToNamed('cfreport');
           }),
+          _listTile('နေ့အလိုက်ဝင်ငွေထွက်ငွေအစီရင်ခံစာ', Icons.money, () {
+            Get.offAndToNamed('cashflowdaily');
+          }),
           _listTile("Setting", Icons.settings, () {}),
         ],
       ),

@@ -10,6 +10,7 @@ import 'package:starman/views/report_view/profitlost_report_view.dart';
 import 'package:starman/views/starid_view.dart';
 import 'package:starman/views/passcode_view.dart';
 import 'package:starman/views/splashscreen.dart';
+import 'package:starman/views/report_view/cf_daily_report_view.dart';
 
 class AppColors {
   static const Color primaryColor = Color(0xFFA39FD9);
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
     GetPage(name: '/existingPasscode', page: () => ExistingPasscodeView()),
     GetPage(name: '/profitlost', page: () => ProfitLostReportView()),
     GetPage(name: '/cfreport', page: () => CfReportView()),
+    GetPage(name: '/cashflowdaily', page: () => CfDailyReportView())
   ];
 
   MyApp({super.key});
@@ -41,7 +43,7 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       getPages: routes,
       debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
+      home: CfDailyReportView(),
     );
   }
 }
